@@ -1,57 +1,166 @@
-# NIST Open-Source Software Repository Template
+# Authentication and Identity Services for OAR Data Systems
 
-Use of GitHub by NIST employees for government work is subject to
-the [Rules of Behavior for GitHub][gh-rob]. This is the
-recommended template for NIST employees, since it contains
-required files with approved text. For details, please consult
-the Office of Data & Informatics' [Quickstart Guide to GitHub at
-NIST][gh-odi].
+The Open Access to Research (OAR) initiave at NIST provides capabilities for
+publishing data and code resulting from NIST research.  This repository provids
+Python components that implement authentication and identity services for an
+environment of OAR microservices.
 
-Please click on the green **Use this template** button above to
-create a new repository under the [usnistgov][gh-nst]
-organization for your own open-source work. Please do not "fork"
-the repository directly, and do not create the templated
-repository under your individual account.
+A key service provided by this repository is an authentication broker service.
+It integrates with the institution's (SAML-base) identity provider to log users
+into the OAR environment.  For an authenticated client/user, it can provide a
+JSON Web Token (JWT) which the client uses to connect to other OAR backend
+services. 
 
-The key files contained in this repository -- which will also
-appear in templated copies -- are listed below, with some things
-to know about each.
+## Contents
 
----
+```
+python       --> Python source code for the metadata and preservation
+                  services
+scripts      --> Tools for running the services and running all tests
+oar-build    --> general oar build system support (do not customize)
+metadata     --> The base nistoar Python source code, provided as a git
+                  submodule
+docker/      --> Docker containers for building and running tests
+```
 
-## README
+## Prerequisites
 
-Each repository will contain a plain-text [README file][wk-rdm],
-preferably formatted using [GitHub-flavored Markdown][gh-mdn] and
-named `README.md` (this file) or `README`.
+The code requires Python 3.9 or later.
 
-Per the [GitHub ROB][gh-rob] and [NIST Suborder 1801.02][nist-s-1801-02],
-your README should contain:
+The oar-metadata package is a prerequisite which is configured as git
+sub-module of this package.  This means after you clone the oar-pdr git
+repository, you should use `git submodule` to pull in the oar-metadata
+package into it:
+```
+git submodule update --init
+```
 
-1. Software or Data description
-   - Statements of purpose and maturity
-   - Description of the repository contents
-   - Technical installation instructions, including operating
-     system or software dependencies
-1. Contact information
-   - PI name, NIST OU, Division, and Group names
-   - Contact email address at NIST
-   - Details of mailing lists, chatrooms, and discussion forums,
-     where applicable
-1. Related Material
-   - URL for associated project on the NIST website or other Department
-     of Commerce page, if available
-   - References to user guides if stored outside of GitHub
-1. Directions on appropriate citation with example text
-1. References to any included non-public domain software modules,
-   and additional license language if needed, *e.g.* [BSD][li-bsd],
-   [GPL][li-gpl], or [MIT][li-mit]
+See oar-metadata/README.md for a list of its prerequisites.
 
-The more detailed your README, the more likely our colleagues
-around the world are to find it through a Web search. For general
-advice on writing a helpful README, please review
-[*Making Readmes Readable*][18f-guide] from 18F and Cornell's
-[*Guide to Writing README-style Metadata*][cornell-meta].
+In addition to oar-metadata and its prerequisites, this package requires
+the following third-party packages:
+
+ * python3-saml
+
+Furhter, testing and development optionally requires:
+
+ * pySAML2
+
+### Acquiring prerequisites via Docker
+
+As an alternative to explicitly installing prerequisites to run
+the tests, the `docker` directory contains scripts for building a
+Docker container with these installed.  Running the `docker/run.sh`
+script will build the containers (caching them locally), start the
+container, and put the user in a bash shell in the container.  From
+there, one can run the tests or use the `jq` and `validate` tools to
+interact with metadata files.
+
+# Building and Testing the software
+
+This repository currently provides one specific software product:
+  *  `pdr-publish` -- the publishing services 
+
+## Simple Building with `makedist`
+
+As a standard OAR repository, the software products can be built by simply via
+the `makedist` script, assuming the prerequisites are installed: 
+
+```
+  scripts/makedist
+```
+
+The built products will be written into the `dist` subdirectory
+(created by the `makedist`); each will be written into a zip-formatted
+file with a name formed from the product name and a version string.  
+
+The individual products can be built separately by specifying the
+product name as arguments, e.g:
+
+```
+  scripts/makedist auth-py
+```
+
+Additional options are available; use the `-h` option to view the
+details:
+
+```
+  scripts/makedist -h
+```
+
+### Simple Testing with `testall`
+
+Assuming the prerequisites are installed, the `testall` script can be
+used to execute all unit and integration tests:
+
+```
+  scripts/testall
+```
+
+Like with `makedist`, you can run the tests for the different products
+separately by listing the desired product names as arguments to
+`testall`.  Running `testall -h` will explain available command-line
+options.
+
+### Building and Testing Using Native Tools
+
+The Python build tool, `setup.py`, is used to build and test the
+software.  To build, type while in this directory:
+
+```
+  python setup.py build
+```
+
+This will create a `build` subdirectory and compile and install the
+software into it.  To install it into an arbitrary location, type
+
+```
+  python setup.py --prefix=/oar/home/path install
+```
+
+where _/oar/home/path_ is the path to the base directory where the
+software should be installed.
+
+The `makedist` script (in [../scripts](../scripts)) will package up an
+installed version of the software into a zip file, writing it out into
+the `../dist` directory.  Unpacking the zip file into a directory is
+equivalent to installing it there.
+
+To run the unit tests, type:
+
+```
+  python setup.py test
+```
+
+### Building and Testing Using Docker
+
+Like all standard OAR repositories, this repository supports the use
+of Docker to build the software and run its tests.  (This method is
+used at NIST in production operations.)  The advantage of the Docker
+method is that it is not necessary to first install the
+prerequisites; this are installed automatically into Docker
+containers.
+
+To build the software via a docker container, use the
+`makedist.docker` script: 
+
+```
+  scripts/makedist.docker
+```
+
+Similarly, `testall.docker` runs the tests in a container:
+
+```
+  scripts/testall.docker
+```
+
+Like their non-docker counterparts, these scripts accept product names
+as arguments.
+
+## Running the services
+
+The [scripts](scripts) directory contains
+[WSGI applications](https://docs.python.org/3/library/wsgiref.html) scripts.
 
 ## LICENSE
 

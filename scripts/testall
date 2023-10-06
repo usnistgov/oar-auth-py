@@ -1,0 +1,53 @@
+#!/bin/bash
+#
+# testall:  run all package tests
+#
+# Usage: testall [ CATEGORY ... ]
+#
+# where CATEGORY is one of
+#   pyunit      run the python unit tests
+#   services    run the services integration tests
+#
+# For each supported CATEGORY, there must be a script with a name of the form
+# scripts/testall.CATEGORY.  
+#
+set -e
+prog=`basename $0`
+execdir=`dirname $0`
+[ "$execdir" = "" -o "$execdir" = "." ] && execdir=$PWD
+PACKAGE_DIR=`(cd $execdir/.. > /dev/null 2>&1; pwd)`
+
+if [ -d "$PACKAGE_DIR/python/build" ]; then
+    export OAR_TEST_ARTIFACT_DIR="$PACKAGE_DIR/python/build/test-artifacts"
+    [ -d "$OAR_TEST_ARTIFACT_DIR" ] || mkdir $OAR_TEST_ARTIFACT_DIR
+fi
+
+# buildtypes="pyunit services"
+buildtypes="pyunit"
+
+dotypes="$@"
+[ -n "$dotypes" ] || dotypes=$buildtypes
+
+echo > testall.out
+
+set -o pipefail
+fail=
+for bt in $dotypes; do
+    if [ -x "$execdir/testall.$bt" ]; then
+        echo "Running $bt tests..." | tee -a testall.out
+        echo >> testall.out
+        echo '+' "$execdir/testall.$bt" | tee -a testall.out
+        ("$execdir/testall.$bt" -v 2>&1 | tee -a testall.out) || fail=$?
+    else
+        echo "Testing script for $bt does not exist!" | tee -a testall.out
+        fail=2
+    fi
+done
+
+if [ -n "$fail" ]; then
+    echo "Some test(s) failed" | tee -a testall.out
+    exit $fail
+else
+    echo "All OK" | tee -a testall.out
+fi
+exit 0
