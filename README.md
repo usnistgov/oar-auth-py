@@ -59,7 +59,7 @@ interact with metadata files.
 # Building and Testing the software
 
 This repository currently provides one specific software product:
-  *  `pdr-publish` -- the publishing services 
+  *  `auth-py` -- the authentication broker service
 
 ## Simple Building with `makedist`
 
