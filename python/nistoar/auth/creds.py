@@ -216,28 +216,28 @@ class Credentials(_FallbackDict):
         self['userEmail'] = val
 
     @property
-    def givenName(self) -> str:
+    def given_name(self) -> str:
         """
         the value of the "userName" attribute, representing the user's 
         given (or first) name
         """
         return self['userName']
 
-    @givenName.setter
-    def givenName(self, val: str):
+    @given_name.setter
+    def given_name(self, val: str):
         self['userName'] = val
 
 
     @property
-    def familyName(self) -> str:
+    def family_name(self) -> str:
         """
         the value of the "userLastName" attribute, representing the user's 
         family (or last) name
         """
         return self['userLastName']
     
-    @familyName.setter
-    def familyName(self, val: str):
+    @family_name.setter
+    def family_name(self, val: str):
         self['userLastName'] = val
 
 
