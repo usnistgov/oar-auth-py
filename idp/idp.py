@@ -9,7 +9,6 @@ import os
 import re
 import time
 from urllib.parse import parse_qs
-import pdb
 
 from idp_user import EXTRA
 from idp_user import USERS
@@ -319,7 +318,6 @@ class SSO(Service):
         :param encrypt_cert: Cert to use for encryption
         :return: A response
         """
-        pdb.set_trace()
         try:
             resp_args, _resp = self.verify_request(query, binding_in)
         except UnknownPrincipal as excp:
