@@ -5,6 +5,7 @@ the NIST IDP.
 """
 from collections import namedtuple
 from collections.abc import Mapping
+from typing import Union
 
 from ..creds import Credentials
 
@@ -21,7 +22,7 @@ ATTR_NAME = AttributeNames(
     OU     = _SOAP_BASE_URI + "2005/05/identity/claims/nistOU"
 )
 
-def make_credentials(samlattrs: Mapping):
+def make_credentials(samlattrs: Mapping, expiration: Union[str,int,float]=None):
     """
     create a Credentials object based on the results of SAML authentication 
     that can be returned to our service clients.
@@ -34,5 +35,12 @@ def make_credentials(samlattrs: Mapping):
         "userOU":       samlattrs.get(ATTR_NAME.OU,     "not-set")
     }
 
-    return Credentials(id, attrs)
+    if expiration is not None and isinstance(expiration, str):
+        # assume in ISO format
+        try:
+            expiration = datetime.fromisoformat(expiration).timestamp()
+        except ValueError as ex:
+            raise ValueError("make_credentials(): expiration param not an ISO date")
+
+    return Credentials(id, attrs, expiration)
 

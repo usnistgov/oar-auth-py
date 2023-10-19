@@ -143,9 +143,32 @@ class TestCredentials(test.TestCase):
 
         self.assertIsNotNone(self.crd._gen)
 
-        self.crd = creds.Credentials("me", self.atts,
+        self.crd = creds.Credentials("me", self.atts, None,
                                      creds.default_token_generator)
         self.assertIsNotNone(self.crd._gen)
+
+        self.crd = creds.Credentials()
+        self.assertEqual(self.crd.id, creds.UNAUTHENTICATED)
+        self.assertEqual(creds.UNAUTHENTICATED, "anonymous")
+
+    def test_expiration(self):
+        self.crd = creds.Credentials("Gurn")
+        self.assertIsNone(self.crd.expiration_time)
+        self.assertTrue(isinstance(self.crd.expiration, str))
+        self.assertEqual(self.crd.expiration, "(unset)");
+        self.assertFalse(self.crd.expired())
+
+        self.crd = creds.Credentials("Gurn", {}, time.time()+3600)
+        self.assertIsNotNone(self.crd.expiration_time)
+        self.assertTrue(isinstance(self.crd.expiration, str))
+        self.assertNotEqual(self.crd.expiration, "(unset)");
+        self.assertFalse(self.crd.expired())
+
+        self.crd = creds.Credentials("Gurn", {}, time.time()-3600)
+        self.assertIsNotNone(self.crd.expiration_time)
+        self.assertTrue(isinstance(self.crd.expiration, str))
+        self.assertNotEqual(self.crd.expiration, "(unset)");
+        self.assertTrue(self.crd.expired())
 
     def test_keys(self):
         self.crd = creds.Credentials("me", self.atts)

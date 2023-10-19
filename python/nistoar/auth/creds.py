@@ -3,6 +3,7 @@ a module that defines a Credentials object used to capture identity attributes
 for an authenticated user.
 """
 import json, time
+from datetime import datetime
 from collections import UserDict, OrderedDict
 from collections.abc import Mapping
 from typing import Any, Iterable
@@ -152,6 +153,8 @@ def create_default_token_generator(config: Mapping):
     default_token_generator = default_token_generator_cls(config)
     return default_token_generator
 
+UNAUTHENTICATED = "anonymous"
+
 class Credentials(_FallbackDict):
     """
     a container for identity information about an authenticated user that 
@@ -169,8 +172,9 @@ class Credentials(_FallbackDict):
         "userLastName": "unknown"
     }
 
-    def __init__(self, userid: str = "anonymous",
+    def __init__(self, userid: str = UNAUTHENTICATED,
                  useratts: Mapping[str, Any]=None,
+                 expiration: float=None,
                  tokengen: TokenGenerator = None):
         """
         Create a credentials object for a specified user with a given set of 
@@ -179,6 +183,8 @@ class Credentials(_FallbackDict):
                                default: "anonymous"
         :param dict useratts:  a dictionary of user attributes to initialize
                                this container with.
+        :param float expiration:  the time that the authenticated session is set to 
+                               expire, given as the epoch time in seconds.
         :param TokenGenerator tokengen:  the token generator to use to create
                                authentication tokens (via 
                                :py:meth:`create_token`).  If not set, a 
@@ -189,10 +195,18 @@ class Credentials(_FallbackDict):
         defattrs = {"userId": userid}
         defattrs.update(self.__defattrs)
         super(Credentials, self).__init__(defattrs)
+
         if useratts is not None:
             for key,val in useratts.items():
                 if key not in ['userId']:
                     self[key] = val
+
+        self._expires = None
+        if expiration:
+            if not isinstance(expiration, (float, int)):
+                raise ValueError("Credentials ctor: expiration not a number: "+str(expiration))
+            self._expires = expiration
+
         self._gen = tokengen
         if not self._gen:
             self._gen = default_token_generator
@@ -203,6 +217,38 @@ class Credentials(_FallbackDict):
         the identifier for the authenticated user
         """
         return self['userId']
+
+    def is_authenticated(self):
+        """
+        return False if the user ID represents an unauthenticated user
+        """
+        return self.id != UNAUTHENTICATED
+
+    @property
+    def expiration_time(self):
+        """
+        the expected expiration of the credential's authenticated validity.  This value can 
+        be None if an expiration was not set at construction time.
+        """
+        return self._expires
+
+    @property
+    def expiration(self):
+        """
+        the expected expiration of the credential's authenticated validity, returned as 
+        an ISO-formatted string
+        """
+        if self.expiration_time is None:
+            return "(unset)"
+        return datetime.fromtimestamp(self.expiration_time).isoformat()
+
+    def expired(self):
+        """
+        return True if the this credential expiration time has passed
+        """
+        if self.expiration_time is None:
+            return False
+        return self.expiration_time <= time.time()
 
     @property
     def email(self) -> str:
@@ -296,5 +342,8 @@ class Credentials(_FallbackDict):
         :param int lifetime:  the time in seconds until the token should expire.
                               If not given, the configured default will be used.
         """
+        if not self.is_authenticated():
+            raise RuntimeError("Credentials token cannot be set for unauthenticated, %s user" %
+                               self.id)
         self['token'] = self.create_token(lifetime)
 

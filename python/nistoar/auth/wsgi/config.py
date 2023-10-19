@@ -16,10 +16,11 @@ from pathlib import Path
 from collections.abc import Mapping
 
 from nistoar.base import config as oarconfig
+from nistoar.base.config import ConfigurationException, configure_log
 
 DEFAULT_CONFIG_FILE = "default_config.json"
 
-def find_auth_data_dir(config: Mapping=None):
+def find_auth_data_dir(config: Mapping=None) -> str:
     """
     return the path to the directory containing operational data that 
     drives the authentication broker service.  The given configuration 
@@ -43,7 +44,7 @@ def find_auth_data_dir(config: Mapping=None):
     def assert_exists(dir, ctxt=""):
         if not Path(dir).exists():
             msg = "{0}directory does not exist: {1}".format(ctxt, dir)
-            raise oarconfig.ConfigurationException(msg)
+            raise ConfigurationException(msg)
 
     # check the configuration
     if config and 'data_dir' in config:
@@ -89,7 +90,7 @@ def find_auth_data_dir(config: Mapping=None):
 
 def_auth_data_dir = find_auth_data_dir()
 
-def expand_config(config=None, def_config=None):
+def expand_config(config: Mapping=None, def_config: Mapping=None) -> Mapping:
     """
     expand the authentication service configuration with default values for parameters that 
     do not appear in the input.  
@@ -97,6 +98,10 @@ def expand_config(config=None, def_config=None):
     The defaults are read in from the data directory and merged with the given data (using 
     :py:func:`nistoar.base.config.merge_config`).  The data in given config data over-rides 
     any set in the defaults.
+
+    If a primary configuration is provided and it has its ``data_dir`` property set, its value
+    will be used as the directory where the default configuration can be found.  The value is 
+    ignored if the over-riding ``def_config`` parameter is provided.
 
     :param Mapping config:  the primary configuraiton data (usually read from the config 
                             service).  If not provide, only the default values are returned.
@@ -106,13 +111,16 @@ def expand_config(config=None, def_config=None):
                             containing the actual default configuration data.
     @return dict  a new dictionary containing the expanded configuration.  
     """
+    data_dir = Path(def_auth_data_dir)
     if config:
         if not isinstance(config, Mapping):
             raise TypeError("expand_config(): config parameter is not a dictionary: " +
                             str(type(config)))
+        if 'data_dir' in config:
+            data_dir = find_auth_data_dir(config)
 
     if not def_config:
-        def_config = Path(def_auth_data_dir) / DEFAULT_CONFIG_FILE
+        def_config = data_dir / DEFAULT_CONFIG_FILE
     if isinstance(def_config, Path):
         def_config = str(def_config)
     if isinstance(def_config, str):
