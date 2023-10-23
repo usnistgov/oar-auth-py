@@ -10,7 +10,6 @@ FROM oar-auth-py/pyenv
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod a+rx /usr/local/bin/entrypoint.sh
 
-VOLUME /dev/oar-pdr-py
 VOLUME /app/dist
 
 RUN mkdir -p /dev/oar-auth-py /app && chmod a+rwx /app

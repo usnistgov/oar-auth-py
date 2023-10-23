@@ -16,7 +16,7 @@ SED_RE_OPT=r
 [ "$os" != "Darwin" ] || SED_RE_OPT=E
 
 PACKAGE_NAME=oar-auth-py
-DEFAULT_CONFIGFILE=$dockerdir/authserver/local-authservice-config.yml
+DEFAULT_CONFIGFILE=$dockerdir/authserver/authservice-config.yml
 
 set -e
 
@@ -35,12 +35,12 @@ ARGUMENTS
   -b, --build                   Rebuild the python library and install into dist;
                                 This is done automatically if the dist directory 
                                 does not exist.
-  -D, --docker-build            Rebuild the midasserver docker image; this is 
-                                done automatically if the midasserver image 
+  -D, --docker-build            Rebuild the authserver docker image; this is 
+                                done automatically if the authserver image 
                                 does not exist.
   -c FILE, --config-file FILE   Use a custom service configuration given in FILE.
                                 This file must be in YAML or JSON format.
-                                Defaut: docker/midasserver/midas-dmp_config.yml
+                                Defaut: docker/authserver/authserver-config.yml
   -d DIR, --data-dir            Use DIR as the location of the static data files 
                                 needed by the service.  Default: etc/authservice
   -h, --help                    Print this text to the terminal and then exit
@@ -58,8 +58,8 @@ function docker_images_built {
 }
 
 function build_server_image {
-    echo '+' $dockerdir/dockbuild.sh -d midasserver
-    $dockerdir/dockbuild.sh -d midasserver # > log
+    echo '+' $dockerdir/dockbuild.sh -d authserver
+    $dockerdir/dockbuild.sh -d authserver # > log
 }
 
 DOPYBUILD=
@@ -122,7 +122,7 @@ done
 VOLOPTS="-v $repodir/python/dist:/app/dist"
 
 # build the docker images if necessary
-(docker_images_built midasserver && [ -z "$DODOCKBUILD" ]) || build_server_image
+(docker_images_built authserver && [ -z "$DODOCKBUILD" ]) || build_server_image
 
 [ -n "$CONFIGFILE" ] || CONFIGFILE=$DEFAULT_CONFIGFILE
 [ -f "$CONFIGFILE" ] || {
