@@ -30,6 +30,12 @@ properties:
     The location of the directory that contains the files needed to drive this Flask-based 
     service.  This includes the Flask ``templates`` and ``static`` folders, as well as the 
     ``default_config.json``.  
+``logfile``
+    (str) _recommended_.  The name or path (relative or absolute) for the file to write log 
+    messages to.  
+``logdir``
+    (str) _optional_.  The directory to write the log file into (if ``logfile`` is given as 
+    a relative path).  
 ``debug``
     (bool) _optional_.  If true, debugging will be turned on in both the Flask machinery and the 
     SAML library (over-riding the ``debug`` properties supported in the ``flask`` and ``saml``
