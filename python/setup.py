@@ -16,6 +16,7 @@ CLASSIFIERS = [
 ]
 
 SCRIPTS = [
+    'authservice-uwsgi.py'
 ]
 
 TESTSCRIPTS = [

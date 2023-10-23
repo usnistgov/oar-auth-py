@@ -1,0 +1,32 @@
+allowed_service_endpoints:  [ https://localhost, http://localhost ]
+flask:
+  SECRET_KEY: 904ddb103ff8c274c761d6472e9179d5034ad17b
+jwt:
+  secret: "yeWAgVDfb$!MFn@MCJVN7uqkznHbDLR#"
+  lifetime:  86400
+saml:
+  strict: true
+  debug:  false
+  sp:
+    entityId:  https://localhost:9095/sso/metadata/
+    assertionConsumerService:
+      url: https://localhost:9095/sso/saml/acs
+      binding: urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST
+    singleLogoutService:
+      url: https://localhost:9095/sso/saml/sls
+      binding: urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect
+    NameIDFormat: urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified
+    x509cert: ""
+    privateKey: ""
+  idp:
+    # this is the NIST service
+    entityId:  https://localhost:8088/idp.xml
+    singleSignOnService: 
+      url: https://localhost:8088/sso/redirect
+      binding: urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect
+    singleLogoutService:
+      url: https://localhost:8088/sso/redirect
+      binding: urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect
+      x509cert: ""
+
+   

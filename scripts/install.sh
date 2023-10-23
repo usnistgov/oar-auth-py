@@ -31,8 +31,9 @@ echo Installing python libraries into $PY_LIBDIR...
 $oarmd_pkg/scripts/install_extras.sh --install-dir=$INSTALL_DIR
 
 mkdir -p $INSTALL_DIR/var/logs
-#echo cp -r $SOURCE_DIR/etc $INSTALL_DIR
-#cp -r $SOURCE_DIR/etc $INSTALL_DIR
+mkdir -p $INSTALL_DIR/etc
+echo cp -r $SOURCE_DIR/etc/\* $INSTALL_DIR/etc
+cp -r $SOURCE_DIR/etc/* $INSTALL_DIR/etc
 
 mkdir -p $INSTALL_DIR/docs
 # echo cp $SOURCE_DIR/docs/\*-openapi.yml $SOURCE_DIR/docs/\*-elements.html $INSTALL_DIR/docs

@@ -3,8 +3,8 @@
 [ "$1" = "" ] && exec /bin/bash
 
 function install {
-    scripts/install.sh --prefix=/app/pdr || return 1
-    export OAR_HOME=/app/pdr
+    scripts/install.sh --prefix=/app/oarauth || return 1
+    export OAR_HOME=/app/oarauth
     export PYTHONPATH=$OAR_HOME/lib/python
     export OAR_LOG_DIR=$OAR_HOME/var/logs
 }
@@ -22,7 +22,7 @@ case "$1" in
         ;;
     testall)
         install || {
-            echo "testall: Failed to install oar-pdr-py"
+            echo "testall: Failed to install oar-auth-py"
             exitopwith testall 2
         }
         shift
@@ -37,14 +37,14 @@ case "$1" in
         ;;
     install)
         install
-        python -c 'import nistoar.pdr, jq'
+        python -c 'import nistoar.auth'
         ;;
     testshell)
-        # libdir=`ls /dev/oar-pdr-py/python/build | grep lib.`
-        export OAR_PYTHONPATH=/dev/oar-pdr-py/python/build/lib
-        export OAR_JQ_LIB=/dev/oar-pdr-py/metadata/jq
-        export OAR_MERGE_ETC=/dev/oar-pdr-py/metadata/etc/merge
-        export OAR_SCHEMA_DIR=/dev/oar-pdr-py/metadata/model
+        # libdir=`ls /dev/oar-oarauth-py/python/build | grep lib.`
+        export OAR_PYTHONPATH=/dev/oar-auth-py/python/build/lib
+        export OAR_JQ_LIB=/dev/oar-auth-py/metadata/jq
+        export OAR_MERGE_ETC=/dev/oar-auth-py/metadata/etc/merge
+        export OAR_SCHEMA_DIR=/dev/oar-auth-py/metadata/model
         export PYTHONPATH=$OAR_PYTHONPATH
         exec /bin/bash
         ;;

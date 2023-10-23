@@ -5,8 +5,7 @@ for an authenticated user.
 import json, time
 from datetime import datetime
 from collections import UserDict, OrderedDict
-from collections.abc import Mapping
-from typing import Any, Iterable
+from typing import Any, Iterable, Mapping
 from abc import ABC, abstractmethod, abstractproperty
 
 import jwt
