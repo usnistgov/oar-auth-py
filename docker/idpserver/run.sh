@@ -40,6 +40,8 @@ ARGUMENTS
                                 code.  Defaut: idp/idp_conf.
   -d DIR, --data-dir            Use DIR as the location of the static data files 
                                 needed by the service.  Default: idp
+  -B, --bg                      Run the server in the background (returning the 
+                                command prompt after successful launch)
   -h, --help                    Print this text to the terminal and then exit
 
 EOF
@@ -63,6 +65,7 @@ DOPYBUILD=
 DODOCKBUILD=
 CONFIGFILE=
 DATADIR=$repodir/idp
+PORT=8088
 while [ "$1" != "" ]; do
     case "$1" in
         -b|--build)
@@ -70,6 +73,9 @@ while [ "$1" != "" ]; do
             ;;
         -D|--docker-build)
             DODOCKBUILD="-D"
+            ;;
+        -B|--bg|--detach)
+            DETACH="--detach"
             ;;
         -c)
             shift
@@ -84,6 +90,13 @@ while [ "$1" != "" ]; do
             ;;
         --data-dir=*)
             DATADIR=`echo $1 | sed -e 's/[^=]*=//'`
+            ;;
+        -p)
+            shift
+            PORT=$1
+            ;;
+        --port=*)
+            PORT=`echo $1 | sed -e 's/[^=]*=//'`
             ;;
         -h|--help)
             usage
@@ -158,7 +171,14 @@ if [ "$ACTION" = "stop" ]; then
     echo Shutting down the midas server...
     stop_server || true
 else
-    echo '+' docker run $ENVOPTS $VOLOPTS -p 8088:8088 --rm --name=$CONTAINER_NAME $PACKAGE_NAME/idpserver
-    docker run $ENVOPTS $VOLOPTS -p 8088:8088 --rm --name=$CONTAINER_NAME $PACKAGE_NAME/idpserver
+    echo '+' docker run $ENVOPTS $VOLOPTS -p $PORT:8088 --rm \
+                        --name=$CONTAINER_NAME $DETACH $PACKAGE_NAME/idpserver
+    docker run $ENVOPTS $VOLOPTS -p $PORT:8088 --rm \
+           --name=$CONTAINER_NAME $DETACH $PACKAGE_NAME/idpserver
 fi
 
+[ -z "$DETACH" ] || {
+    echo
+    echo Started IDP Login service in background \(see logs with \"docker logs idpserver\"\)
+    echo
+}
