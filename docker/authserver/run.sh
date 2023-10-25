@@ -41,8 +41,11 @@ ARGUMENTS
   -c FILE, --config-file FILE   Use a custom service configuration given in FILE.
                                 This file must be in YAML or JSON format.
                                 Defaut: docker/authserver/authserver-config.yml
-  -d DIR, --data-dir            Use DIR as the location of the static data files 
+  -d DIR, --data-dir DIR        Use DIR as the location of the static data files 
                                 needed by the service.  Default: etc/authservice
+  -p PORT, --port PORT          Launch this service to listen on PORT, where PORT
+                                is a number.  The default (used with the included
+                                test IDP service) is 9095.
   -h, --help                    Print this text to the terminal and then exit
 
 EOF
@@ -66,6 +69,7 @@ DOPYBUILD=
 DODOCKBUILD=
 CONFIGFILE=
 DATADIR=
+PORT=9095
 while [ "$1" != "" ]; do
     case "$1" in
         -b|--build)
@@ -87,6 +91,13 @@ while [ "$1" != "" ]; do
             ;;
         --data-dir=*)
             DATADIR=`echo $1 | sed -e 's/[^=]*=//'`
+            ;;
+        -p)
+            shift
+            PORT=$1
+            ;;
+        --port=*)
+            PORT=`echo $1 | sed -e 's/[^=]*=//'`
             ;;
         -h|--help)
             usage
@@ -162,7 +173,7 @@ if [ "$ACTION" = "stop" ]; then
     echo Shutting down the midas server...
     stop_server || true
 else
-    echo '+' docker run $ENVOPTS $VOLOPTS -p 127.0.0.1:9095:9095/tcp --rm --name=$CONTAINER_NAME $PACKAGE_NAME/authserver
-    docker run $ENVOPTS $VOLOPTS -p 127.0.0.1:9095:9095/tcp --rm --name=$CONTAINER_NAME $PACKAGE_NAME/authserver
+    echo '+' docker run $ENVOPTS $VOLOPTS -p 127.0.0.1:$PORT:9095/tcp --rm --name=$CONTAINER_NAME $PACKAGE_NAME/authserver
+    docker run $ENVOPTS $VOLOPTS -p 127.0.0.1:$PORT:9095/tcp --rm --name=$CONTAINER_NAME $PACKAGE_NAME/authserver
 fi
 

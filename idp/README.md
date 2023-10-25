@@ -11,6 +11,9 @@ repository's top directory, just type:
 docker/idpserver/run.sh
 ```
 
+Type ``docker/idpserver/run.sh -h`` for additional informoation on more
+start-up options.
+
 Running via the container negates the need to install any dependencies.  The
 rest of this README document discusses running the server directly without the
 use of Docker.
@@ -41,7 +44,8 @@ This server comes configured to run assuming it will be the IDP for the
 authentication broker service (as well as for the sample SP service that comes
 with the python3-saml package).  The configuration is encapsulated in the
 `idp_conf.py` file; see the [pysaml2
-documentation](https://pysaml2.readthedocs.io/) for more information.  
+documentation](https://pysaml2.readthedocs.io/en/latest/howto/config.html) for
+more information on the contents of this file.  
 
 ### Adding Identities for Testing
 
@@ -78,6 +82,6 @@ IDP metadata:
 Authentication Request (which displays login page):
    https://localhost:8088/sso/redirect
 
-Logout Request
+Logout Request:
    https://localhost:8088/slo/redirect
 

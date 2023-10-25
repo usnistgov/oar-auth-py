@@ -19,7 +19,7 @@ saml:
     x509cert: ""
     privateKey: ""
   idp:
-    # this is the NIST service
+    # this is the IDP service that comes with this repo
     entityId:  https://localhost:8088/idp.xml
     singleSignOnService: 
       url: https://localhost:8088/sso/redirect
