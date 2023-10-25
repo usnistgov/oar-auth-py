@@ -98,10 +98,13 @@ class TestSupportFunctions(test.TestCase):
         with open(datadir/"testsettings.json") as fd:
             cfg = json.load(fd)
 
-        auth = flaskapp.create_saml_sp(freq, cfg['saml'])
+        sysdir = config.find_auth_data_dir(cfg)
+
+        auth = flaskapp.create_saml_sp(freq, cfg['saml'], sysdir)
         self.assertTrue(auth)
         self.assertIs(auth.get_settings().get_security_data()['wantNameId'], True)
         self.assertEqual(auth._request_data['script_name'], "/sso")
+        self.assertEqual(auth.get_settings().get_cert_path(), os.path.join(sysdir, "certs")+"/")
         
     def test_checkAllowedUrls(self):
         allowed = [

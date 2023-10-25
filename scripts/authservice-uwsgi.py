@@ -5,7 +5,7 @@ This script launches an ID resolver as a web service using uwsgi.  For example, 
 launch the service with the following command:
 
   uwsgi --plugin python3 --http-socket :9090 --wsgi-file resolver-uwsgi.py \
-        --set-ph oar_config_file=resolver_conf.yml
+        --set-ph oar_config_file=authservice-config.yml
 
 [config parameters]
 
@@ -76,7 +76,7 @@ else:
     raise config.ConfigurationException("authservice: nist-oar configuration not provided")
 
 # create the WSGI application; note: this also configures the log.
-application = wsgi.create_app(cfg, uwsgi.opt.get("oar_default_auth_config_file"))
+application = wsgi.create_app(cfg, uwsgi.opt.get("oar_auth_data_dir"))
 logging.info("Auth service is ready")
 
 

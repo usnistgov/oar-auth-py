@@ -142,7 +142,8 @@ def create_app(config: Mapping=None, data_dir=None):
         the front-end application after successful authentication.
         """
         cfg = current_app.config
-        auth = create_saml_sp(request, cfg['saml'], cfg.get('lowercase_urlencoding'))
+        auth = create_saml_sp(request, cfg['saml'], cfg.get('data_dir'),
+                              cfg.get('lowercase_urlencoding'))
 
         if 'redirectTo' not in request.args:
             return _handle_badinput("missing redirectTo query parameter")
@@ -172,7 +173,8 @@ def create_app(config: Mapping=None, data_dir=None):
 
         log = current_app.logger
         cfg = current_app.config
-        auth = create_saml_sp(request, cfg['saml'], cfg.get('lowercase_urlencoding'))
+        auth = create_saml_sp(request, cfg['saml'], cfg.get('data_dir'),
+                              cfg.get('lowercase_urlencoding'))
 
         try: 
             auth.process_response(request_id=request_id)
@@ -228,7 +230,8 @@ def create_app(config: Mapping=None, data_dir=None):
         """
         log = current_app.logger
         cfg = current_app.config
-        auth = create_saml_sp(request, cfg['saml'], cfg.get('lowercase_urlencoding'))
+        auth = create_saml_sp(request, cfg['saml'], cfg.get('data_dir'),
+                              cfg.get('lowercase_urlencoding'))
 
         name_id = session_index = name_id_format = name_id_nq = name_id_spnq = None
         if 'samlNameId' in session:
@@ -270,7 +273,8 @@ def create_app(config: Mapping=None, data_dir=None):
             
         log = current_app.logger
         cfg = current_app.config
-        auth = create_saml_sp(request, cfg['saml'], cfg.get('lowercase_urlencoding'))
+        auth = create_saml_sp(request, cfg['saml'], cfg.get('data_dir'),
+                              cfg.get('lowercase_urlencoding'))
 
         dscb = lambda: session.clear()
         try:
@@ -385,7 +389,8 @@ def create_app(config: Mapping=None, data_dir=None):
     def metadata():
         log = current_app.logger
         cfg = current_app.config
-        auth = create_saml_sp(request, cfg['saml'], cfg.get('lowercase_urlencoding'))
+        auth = create_saml_sp(request, cfg['saml'], cfg.get('data_dir'),
+                              cfg.get('lowercase_urlencoding'))
 
         settings = auth.get_settings()
         metadata = settings.get_sp_metadata()
@@ -434,15 +439,17 @@ def convert_flask_request_for_saml(flaskreq, lowercase_urlencoding=False):
 
     return out
 
-def create_saml_sp(flaskreq, samlconfig, lowercase_urlencoding=False):
+def create_saml_sp(flaskreq, samlconfig: Mapping, datadir: str=None,
+                   lowercase_urlencoding: bool=False):
     """
     create the SAML SP instance
-    :param flaskreq:    the current Flask Request instance 
-    :param samlconfig:  the configuration to pass to the SAML SP's constructor
+    :param        flaskreq:  the current Flask Request instance 
+    :param dict samlconfig:  the configuration to pass to the SAML SP's constructor
+    :param str    data_dir:  the directory containing saml2 data (like certs)
     :rtype: OneLogin_Saml2_Auth
     """
     samlreq = convert_flask_request_for_saml(flaskreq, lowercase_urlencoding)
-    return OneLogin_Saml2_Auth(samlreq, samlconfig)
+    return OneLogin_Saml2_Auth(samlreq, samlconfig, datadir)
 
 def checkAllowedUrls(url: str, allowed: List[str]):
     """ 
