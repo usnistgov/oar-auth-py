@@ -59,10 +59,11 @@ default file can be given to the :py:func:`create_app` function.
 @Deoyani Nandrekar-Heinis
 @Raymond Plante
 """
-import os, logging
+import os, logging, pdb
 from pathlib import Path
 from typing import List
 from collections.abc import Mapping
+from datetime import datetime
 
 from flask import (Flask, request, current_app, redirect, session,
                    make_response, jsonify)
@@ -183,7 +184,8 @@ def create_app(config: Mapping=None, data_dir=None):
             # IDP message has some validity errors
             log.error("Failures encountered while processing IDP response:\n  "+
                       "\n  ".join(errs))
-            return _handle_error("Invalid response from IDP", 400, errors=errs)
+            return _handle_error("Invalid response from IDP: "+str(auth.get_last_error_reason()),
+                                 400, errors=errs)
 
         if not auth.is_authenticated():
             return _handle_unauthenticated("User did not successfully login")
@@ -192,7 +194,7 @@ def create_app(config: Mapping=None, data_dir=None):
 
         if 'AuthNRequestID' in session:
             del session['AuthNRequestID']
-        session['samlUserdata'] = auth.get_attributes()
+        session['samlUserAttrs'] = auth.get_attributes()
         session['samlNameId'] = auth.get_nameid()
         session['samlNameIdFormat'] = auth.get_nameid_format()
         session['samlNameIdNameQualifier'] = auth.get_nameid_nq()
@@ -200,7 +202,11 @@ def create_app(config: Mapping=None, data_dir=None):
         session['samlSessionIndex'] = auth.get_session_index()
         session['samlSessionExpiration'] = auth.get_session_expiration()
         session['samlAuthenticated'] = True
+        req = convert_flask_request_for_saml(request,
+                                             current_app.config.get('lowercase_urlencoding'))
         self_url = OneLogin_Saml2_Utils.get_self_url(req)
+        print("saved attributes:\n  "+("\n  ".join(list(session['samlUserAttrs'].keys()))))
+        
 
         if 'RelayState' in request.form and self_url != request.form['RelayState']:
             if not checkAllowedUrls(request.form['RelayState'], cfg['allowed_service_endpoints']):
@@ -280,7 +286,8 @@ def create_app(config: Mapping=None, data_dir=None):
             # IDP message has some validity errors
             log.error("Failures encountered while processing IDP response:\n  "+
                       "\n  ".join(errs))
-            return _handle_error("Invalid response from IDP", 502, errors=errs)
+            return _handle_error("Invalid response from IDP: "+str(auth.get_last_error_reason()),
+                                 502, errors=errs)
 
         if return_to and not checkAllowedUrls(return_to, cfg.get('allowed_service_urls', [])):
             log.error("Logout requested unapproved return url: "+return_to)
@@ -315,17 +322,7 @@ def create_app(config: Mapping=None, data_dir=None):
         :rtype:  Credentials
         """
         if session_authenticated(session):
-            expiration = session.get('samlSessionExpiration')
-            if expiration is not None:
-                try:
-                    expiration = datetime.fromisoformat(expiration).timestamp()
-                except ValueError as ex:
-                    if current_app:
-                        current_app.logger.warning("SAML process returned unparseable expiration "
-                                                   "time: %s", str(expiration))
-                    expiration = None
-
-            return make_credentials(session.get('samlUserData'), expiration)
+            return make_credentials(session.get('samlUserAttrs', {}), get_expiration(session))
 
         # return an anonymous user
         return Credentials()  
@@ -345,24 +342,30 @@ def create_app(config: Mapping=None, data_dir=None):
                                            sess.get('samlNameId', "(unknown)"))
             return False
 
+    def get_expiration(sess):
+        expiration = sess.get('samlSessionExpiration')
+
+        if isinstance(expiration, str):
+            try:
+                expiration = datetime.fromisoformat(sess['samlSessionExpiration'])
+            except ValueError as ex:
+                if current_app:
+                    current_app.logger.error("session property, samlSessionExpiration, contains "
+                                             "unparseable value: %s", sess['samlSessionExpiration'])
+                raise
+
+        return expiration
+
     def session_expired(sess):
         """
         return True if the authenticated session has expired.  If the 
         ``samlSessionExpiration`` property is not set, the session will be considered expired.
         """
-        if sess.get('samlSessionExpiration'):
+        expires = get_expiration(sess)
+        if expires is None:
+            return False
+        if expires < datetime.now():
             return True
-
-        try:
-            expires = datetime.fromisoformat(sess['samlSessionExpiration'])
-            if expires < datetime.now():
-                return True
-        except ValueError as ex:
-            if current_app:
-                current_app.logger.error("session property, samlSessionExpiration, contains "
-                                         "unparseable value: %s", sess['samlSessionExpiration'])
-            raise
-
         return False
 
     @app.route('/sso/_tokeninfo')

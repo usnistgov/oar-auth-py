@@ -27,13 +27,17 @@ def make_credentials(samlattrs: Mapping, expiration: Union[str,int,float]=None):
     create a Credentials object based on the results of SAML authentication 
     that can be returned to our service clients.
     """
+    want = [ ATTR_NAME.ID, ATTR_NAME.GIVEN, ATTR_NAME.FAMILY, ATTR_NAME.EMAIL, ATTR_NAME.OU ]
     id = samlattrs.get(ATTR_NAME.ID, "unknown")
     attrs = {
-        "userName":     samlattrs.get(ATTR_NAME.GIVEN,  "unknown"),
-        "userLastName": samlattrs.get(ATTR_NAME.FAMILY, "unknown"),
-        "userEmail":    samlattrs.get(ATTR_NAME.EMAIL,  "not-set"),
-        "userOU":       samlattrs.get(ATTR_NAME.OU,     "not-set")
+        "userName":     samlattrs.get(ATTR_NAME.GIVEN,  ["unknown"])[0],
+        "userLastName": samlattrs.get(ATTR_NAME.FAMILY, ["unknown"])[0],
+        "userEmail":    samlattrs.get(ATTR_NAME.EMAIL,  ["not-set"])[0],
+        "userOU":       samlattrs.get(ATTR_NAME.OU,     ["not-set"])[0]
     }
+    for name in samlattrs:
+        if name not in want:
+            attrs[name] = samlattrs.get(name)[0]
 
     if expiration is not None and isinstance(expiration, str):
         # assume in ISO format

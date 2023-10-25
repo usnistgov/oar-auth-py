@@ -85,7 +85,7 @@ while [ "$1" != "" ]; do
             shift
             DATADIR=$1
             ;;
-        --data-file=*)
+        --data-dir=*)
             DATADIR=`echo $1 | sed -e 's/[^=]*=//'`
             ;;
         -h|--help)
