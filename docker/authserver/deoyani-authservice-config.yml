@@ -1,0 +1,32 @@
+allowed_service_endpoints:  [ https://localhost, http://localhost ]
+flask:
+  SECRET_KEY: 904ddb103ff8c274c761d6472e9179d5034ad17b
+jwt:
+  secret: "yeWAgVDfb$!MFn@MCJVN7uqkznHbDLR#"
+  lifetime:  86400
+saml:
+  strict: true
+  debug:  false
+  sp:
+    entityId:  https://p932439.nist.gov:8000/sso/metadata/
+    assertionConsumerService:
+      url: https://p932439.nist.gov:8000/sso/saml/acs
+      binding: urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST
+    singleLogoutService:
+      url: https://p932439.nist.gov:8000/sso/saml/sls
+      binding: urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect
+    NameIDFormat: urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified
+    x509cert: ""
+    privateKey: ""
+  idp:
+    # this is the NIST service
+    entityId:  https://sts.windows.net/2ab5d82f-d8fa-4797-a93e-054655c61dec/
+    singleSignOnService: 
+      url: https://login.microsoftonline.com/2ab5d82f-d8fa-4797-a93e-054655c61dec/saml2
+      binding: urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect
+    singleLogoutService:
+      url: https://login.microsoftonline.com/2ab5d82f-d8fa-4797-a93e-054655c61dec/saml2
+      binding: urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect
+    x509cert: "MIIC1DCCAbygAwIBAgIQSlxPoI5TqYJLmB7GvyEWkTANBgkqhkiG9w0BAQsFADAmMSQwIgYDVQQDExtBREZTIFNpZ25pbmcgLSBzdHMubmlzdC5nb3YwHhcNMjAwOTMwMTY0OTU2WhcNMjUxMDI5MTY0OTU2WjAmMSQwIgYDVQQDExtBREZTIFNpZ25pbmcgLSBzdHMubmlzdC5nb3YwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQC3iXfPood/b6lBIjgZcKMy638oaUkLGxu2Nh75p0xAJrlhLVzR5lkARsmWxb0yfa17xdgqdguh88QlofEu7lnOTmaXKCvmiUYQZzq+BW6mgO0RxYssRTIaq9uNTKnPvEXFdbN42oVX98gu3ViZlqWF077mZe0fEv5/2bGZLG5TBhollRZOnHokpFJKhrFLu5QEDzl9MZnUPttVKnNwYAeQGQaqjYCNkIDBCwE2lLKEK8F1qhicE6pECN1zVgsgKYxm0PNOGNnY8/l4f5dogJz6P6LNOhUDy5JacdzIdh/bwuPuN3B08QNmp6152FphBQmdcHdqD7azfYqsj96761nZAgMBAAEwDQYJKoZIhvcNAQELBQADggEBABGcRLfJNtRYfZLVT4g+dCUxselA5z0iWYWQvJ0Ga04ni4iVI0FiM1yshe/bmj6fBkl5WZbutrqfMw1MY+v0cy9HuLsLeed+y6e9uYHHJJkXwYVdLMQaF9SJI9+h00ge5t3zHVnBnLMGEb7+JhzWOt1sgEPPLE5+fqIGbWmvvdd9RrQ6nR2ijcCKqYSnoeDMS+BFTyFoSBrjkh0+9JbSngaQLjlQcDPGOx2g7wqQDqtsJUi1v8oNl3Jvdi7tlUZmg2/NyJ+J5NdLEBeVnFW0yzPHm8Nhh3g3In1eRDzJeoAfygNY1rCKBP2wP6PIkhOaBp+Dc+F1QkfFv32uyt2/kog="
+
+   
