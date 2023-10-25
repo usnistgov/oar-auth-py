@@ -8,12 +8,12 @@ saml:
   strict: true
   debug:  false
   sp:
-    entityId:  http://localhost:9095/sso/metadata/
+    entityId:  https://localhost:9095/sso/metadata/
     assertionConsumerService:
-      url: http://localhost:9095/sso/saml/acs
+      url: https://localhost:9095/sso/saml/acs
       binding: urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST
     singleLogoutService:
-      url: http://localhost:9095/sso/saml/sls
+      url: https://localhost:9095/sso/saml/sls
       binding: urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect
     NameIDFormat: urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified
     x509cert: ""
