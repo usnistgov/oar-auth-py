@@ -13,6 +13,7 @@ from urllib.parse import parse_qs
 
 from idp_user import EXTRA
 from idp_user import USERS
+from idp_user import PASSWD
 from mako.lookup import TemplateLookup
 
 from saml2 import BINDING_HTTP_ARTIFACT
@@ -520,15 +521,7 @@ def do_authentication(environ, start_response, authn_context, key, redirect_uri,
 
 # -----------------------------------------------------------------------------
 
-
-PASSWD = {
-    "daev0001": "qwerty",
-    "testuser": "qwerty",
-    "roland": "dianakra",
-    "babs": "howes",
-    "upper": "crust",
-}
-
+# PASSWD lookup comes from idp_user.py
 
 def username_password_authn(environ, start_response, reference, key, redirect_uri, headers=None):
     """

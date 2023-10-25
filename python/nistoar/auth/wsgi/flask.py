@@ -205,8 +205,6 @@ def create_app(config: Mapping=None, data_dir=None):
         req = convert_flask_request_for_saml(request,
                                              current_app.config.get('lowercase_urlencoding'))
         self_url = OneLogin_Saml2_Utils.get_self_url(req)
-        print("saved attributes:\n  "+("\n  ".join(list(session['samlUserAttrs'].keys()))))
-        
 
         if 'RelayState' in request.form and self_url != request.form['RelayState']:
             if not checkAllowedUrls(request.form['RelayState'], cfg['allowed_service_endpoints']):

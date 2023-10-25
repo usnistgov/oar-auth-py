@@ -13,13 +13,16 @@ _MS_BASE_URI = "http://schemas.microsoft.com/ws/"
 _SOAP_BASE_URI = "http://schemas.xmlsoap.org/ws/"
 
 AttributeNames = namedtuple("AttributeNames",
-                            "ID EMAIL GIVEN FAMILY OU".split())
+                            "ID EMAIL NAME GIVEN FAMILY OU ROLE WINID".split())
 ATTR_NAME = AttributeNames(
-    ID     = _MS_BASE_URI   + "2008/06/identity/claims/windowsaccountname",
+    ID     = _SOAP_BASE_URI + "2005/05/identity/claims/nameidentifier",
     EMAIL  = _SOAP_BASE_URI + "2005/05/identity/claims/emailaddress",
+    NAME   = _SOAP_BASE_URI + "2005/05/identity/claims/name",
     GIVEN  = _SOAP_BASE_URI + "2005/05/identity/claims/givenname",
     FAMILY = _SOAP_BASE_URI + "2005/05/identity/claims/surname",
-    OU     = _SOAP_BASE_URI + "2005/05/identity/claims/nistOU"
+    OU     = _SOAP_BASE_URI + "2005/05/identity/claims/nistOU",
+    ROLE   = _MS_BASE_URI   + "2008/06/identity/claims/role",
+    WINID  = _MS_BASE_URI   + "2008/06/identity/claims/windowsaccountname"
 )
 
 def make_credentials(samlattrs: Mapping, expiration: Union[str,int,float]=None):
@@ -27,13 +30,17 @@ def make_credentials(samlattrs: Mapping, expiration: Union[str,int,float]=None):
     create a Credentials object based on the results of SAML authentication 
     that can be returned to our service clients.
     """
-    want = [ ATTR_NAME.ID, ATTR_NAME.GIVEN, ATTR_NAME.FAMILY, ATTR_NAME.EMAIL, ATTR_NAME.OU ]
+    want = [ ATTR_NAME.ID, ATTR_NAME.GIVEN, ATTR_NAME.FAMILY, ATTR_NAME.EMAIL, ATTR_NAME.OU,
+             ATTR_NAME.NAME, ATTR_NAME.ROLE, ATTR_NAME.WINID ]
     id = samlattrs.get(ATTR_NAME.ID, "unknown")
     attrs = {
         "userName":     samlattrs.get(ATTR_NAME.GIVEN,  ["unknown"])[0],
         "userLastName": samlattrs.get(ATTR_NAME.FAMILY, ["unknown"])[0],
         "userEmail":    samlattrs.get(ATTR_NAME.EMAIL,  ["not-set"])[0],
-        "userOU":       samlattrs.get(ATTR_NAME.OU,     ["not-set"])[0]
+        "userOU":       samlattrs.get(ATTR_NAME.OU,     ["not-set"])[0],
+        "role":         samlattrs.get(ATTR_NAME.ROLE,   ["not-set"])[0],
+        "displayName":  samlattrs.get(ATTR_NAME.NAME,   ["unknown"])[0],
+        "winId":        samlattrs.get(ATTR_NAME.WINID,  ["unknown"])[0],
     }
     for name in samlattrs:
         if name not in want:
