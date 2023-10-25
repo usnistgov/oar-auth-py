@@ -32,7 +32,7 @@ def make_credentials(samlattrs: Mapping, expiration: Union[str,int,float]=None):
     """
     want = [ ATTR_NAME.ID, ATTR_NAME.GIVEN, ATTR_NAME.FAMILY, ATTR_NAME.EMAIL, ATTR_NAME.OU,
              ATTR_NAME.NAME, ATTR_NAME.ROLE, ATTR_NAME.WINID ]
-    id = samlattrs.get(ATTR_NAME.ID, "unknown")
+    id = samlattrs.get(ATTR_NAME.ID, ["unknown"])[0]
     attrs = {
         "userName":     samlattrs.get(ATTR_NAME.GIVEN,  ["unknown"])[0],
         "userLastName": samlattrs.get(ATTR_NAME.FAMILY, ["unknown"])[0],
