@@ -46,6 +46,10 @@ ARGUMENTS
   -p PORT, --port PORT          Launch this service to listen on PORT, where PORT
                                 is a number.  The default (used with the included
                                 test IDP service) is 9095.
+  -B, --bg                      Run the server in the background (returning the 
+                                command prompt after successful launch)
+  -I, --with-idp                also launch the IDP server (idpserver) in the 
+                                background for this service to authenticate through.
   -h, --help                    Print this text to the terminal and then exit
 
 EOF
@@ -67,8 +71,10 @@ function build_server_image {
 
 DOPYBUILD=
 DODOCKBUILD=
+DOIDPSERV=
 CONFIGFILE=
 DATADIR=
+DETACH=
 PORT=9095
 while [ "$1" != "" ]; do
     case "$1" in
@@ -77,6 +83,12 @@ while [ "$1" != "" ]; do
             ;;
         -D|--docker-build)
             DODOCKBUILD="-D"
+            ;;
+        -I|--with-idp)
+            DOIDPSERV="-I"
+            ;;
+        -B|--bg|--detach)
+            DETACH="--detach"
             ;;
         -c)
             shift
@@ -163,6 +175,21 @@ if [ -d "$repodir/docs" ]; then
     VOLOPTS="$VOLOPTS -v $repodir/docs:/docs"
 fi
 
+STOP_IDPSERV=true
+if [ -n "$DOIDPSERV" ]; then
+
+    [ "$ACTION" = "stop" ] || {
+        echo '+' $dockerdir/idpserver/run.sh --bg
+        $dockerdir/idpserver/run.sh --bg
+    }
+
+    function stop_idp {
+        echo '+' $dockerdir/idpserver/run.sh stop
+        $dockerdir/idpserver/run.sh stop
+    }
+    STOP_IDPSERV=stop_idp
+fi
+
 CONTAINER_NAME="authserver"
 function stop_server {
     echo '+' docker kill $CONTAINER_NAME
@@ -170,10 +197,19 @@ function stop_server {
 }
 
 if [ "$ACTION" = "stop" ]; then
-    echo Shutting down the midas server...
+    echo Shutting down the auth server...
     stop_server || true
+    $STOP_IDPSERV
 else
-    echo '+' docker run $ENVOPTS $VOLOPTS -p 127.0.0.1:$PORT:9095/tcp --rm --name=$CONTAINER_NAME $PACKAGE_NAME/authserver
-    docker run $ENVOPTS $VOLOPTS -p 127.0.0.1:$PORT:9095/tcp --rm --name=$CONTAINER_NAME $PACKAGE_NAME/authserver
+    echo '+' docker run $ENVOPTS $VOLOPTS -p 127.0.0.1:$PORT:9095/tcp --rm \
+                        --name=$CONTAINER_NAME $DETACH $PACKAGE_NAME/authserver
+    docker run $ENVOPTS $VOLOPTS -p 127.0.0.1:$PORT:9095/tcp --rm \
+               --name=$CONTAINER_NAME $DETACH $PACKAGE_NAME/authserver
 fi
+
+[ -z "$DETACH" ] || {
+    echo
+    echo Started Authentication Broker in background \(see logs with \"docker logs authserver\"\)
+    echo
+}
 
