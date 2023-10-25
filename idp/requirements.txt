@@ -1,3 +1,6 @@
 xmlsec
 lxml
 isodate
+pysaml2
+mako
+cherrypy

@@ -8,6 +8,7 @@ import logging
 import os
 import re
 import time
+import sys
 from urllib.parse import parse_qs
 
 from idp_user import EXTRA
@@ -943,13 +944,13 @@ NON_AUTHN_URLS = [
 
 def metadata(environ, start_response):
     try:
-        path = args.path[:]
-        if path is None or len(path) == 0:
-            path = os.path.dirname(os.path.abspath(__file__))
-        if path[-1] != "/":
-            path += "/"
+#        path = args.path[:]
+#        if path is None or len(path) == 0:
+#            path = os.path.dirname(os.path.abspath(__file__))
+#        if path[-1] != "/":
+#            path += "/"
         metadata = create_metadata_string(
-            path + args.config,
+            args.config,
             IDP.config,
             args.valid,
             args.cert,
@@ -980,7 +981,7 @@ def staticfile(environ, start_response):
         start_response("200 OK", [("Content-Type", "text/xml")])
         return open(path).read()
     except Exception as ex:
-        logger.error("An error occured while creating metadata: %s", ex.message)
+        logger.error("An error occured while serving a static data file: %s", ex.message)
         return not_found(environ, start_response)
 
 
@@ -1049,10 +1050,24 @@ def application(environ, start_response):
 
 # ----------------------------------------------------------------------------
 
+def import_config(configpath):
+    dirpath, fname = os.path.split(configpath)
+    if fname.endswith(".py"):
+        fname = fname[:-3]
+    if dirpath == "":
+        dirpath = "."
+    try:
+        sys.path.insert(0, dirpath)
+        return importlib.import_module(fname)
+    finally:
+        sys.path.pop(0)
+
 
 if __name__ == "__main__":
+    def_base_dir = os.path.dirname(os.path.abspath(__file__))
     parser = argparse.ArgumentParser()
-    parser.add_argument("-p", dest="path", help="Path to configuration file.", default="./idp_conf.py")
+    parser.add_argument("-H", dest="path", default=def_base_dir,
+                        help="Path to the IDP home directory containing IDP system data")
     parser.add_argument(
         "-v",
         dest="valid",
@@ -1063,11 +1078,29 @@ if __name__ == "__main__":
     parser.add_argument("-k", dest="keyfile", help="A file with a key to sign the metadata with")
     parser.add_argument("-n", dest="name")
     parser.add_argument("-s", dest="sign", action="store_true", help="sign the metadata")
-    parser.add_argument("-m", dest="mako_root", default="./")
+    parser.add_argument("-m", dest="mako_root", default=None,
+                        help="root directory for finding mako templates (should contain "+
+                             "'templates' and 'htdocs')")
     parser.add_argument(dest="config")
     args = parser.parse_args()
 
-    CONFIG = importlib.import_module(args.config)
+    args.config = os.path.abspath(args.config)
+    if args.path and args.path != os.path.dirname(os.path.abspath(args.config)):
+        # Sorry, this is a hack to set a config module variable before import is complete
+        import builtins
+        builtins.IDP_BASE_DIR = args.path
+        print("Switching to base dir to "+builtins.IDP_BASE_DIR, file=sys.stderr)
+        sys.stderr.flush()
+    CONFIG = import_config(args.config)
+
+    if not args.mako_root:
+        if args.path:
+            args.mako_root = args.path
+        else:
+            args.mako_root = os.path.dirname(os.path.abspath(__file__))
+    if args.mako_root[-1] != os.sep:
+        args.mako_root += os.sep
+            
 
     AUTHN_BROKER = AuthnBroker()
     AUTHN_BROKER.add(authn_context_class_ref(PASSWORD), username_password_authn, 10, CONFIG.BASE)
@@ -1099,18 +1132,21 @@ if __name__ == "__main__":
 
     HOST = CONFIG.HOST
     PORT = CONFIG.PORT
+    if HOST == "localhost":
+        HOST = "0.0.0.0"
 
     SRV = WSGIServer((HOST, PORT), application)
 
     _https = ""
     if CONFIG.HTTPS:
-        https = "using HTTPS"
+        _https = " using HTTPS"
         # SRV.ssl_adapter = ssl_pyopenssl.pyOpenSSLAdapter(
         #     config.SERVER_CERT, config.SERVER_KEY, config.CERT_CHAIN)
         SRV.ssl_adapter = BuiltinSSLAdapter(CONFIG.SERVER_CERT, CONFIG.SERVER_KEY, CONFIG.CERT_CHAIN)
 
     logger.info("Server starting")
-    print(f"IDP listening on {HOST}:{PORT}{_https}")
+    print(f"IDP listening on {HOST}:{PORT}{_https}", file=sys.stderr)
+    sys.stderr.flush()
     try:
         SRV.start()
     except KeyboardInterrupt:

@@ -32,7 +32,7 @@ Debian/Ubuntu,
 In addition, relies on a few python packages, which can be installed with pip:
 
 ```
-  pip install xmlsec lxml isodate
+  pip install xmlsec lxml isodate pysaml2 mako cherrypy
 ```
 
 ## Configuring the server

@@ -8,7 +8,7 @@ from saml2 import BINDING_HTTP_POST
 from saml2 import BINDING_HTTP_REDIRECT
 from saml2 import BINDING_SOAP
 from saml2 import BINDING_URI
-from saml2.saml import NAME_FORMAT_URI
+from saml2.saml import NAME_FORMAT_UNSPECIFIED
 from saml2.saml import NAMEID_FORMAT_PERSISTENT
 from saml2.saml import NAMEID_FORMAT_TRANSIENT
 
@@ -23,8 +23,10 @@ if get_xmlsec_binary:
 else:
     xmlsec_path = '/usr/bin/xmlsec1'
 
+import builtins
 BASEDIR = os.path.abspath(os.path.dirname(__file__))
-
+if hasattr(builtins, 'IDP_BASE_DIR') and getattr(builtins, 'IDP_BASE_DIR'):
+    BASEDIR = getattr(builtins, 'IDP_BASE_DIR') 
 
 def full_path(local_file):
     return os.path.join(BASEDIR, local_file)
@@ -40,8 +42,8 @@ else:
     BASE = "http://%s:%s" % (HOST, PORT)
 
 # HTTPS cert information
-SERVER_CERT = "pki/mycert.pem"
-SERVER_KEY = "pki/mykey.pem"
+SERVER_CERT = full_path("pki/mycert.pem")
+SERVER_KEY = full_path("pki/mykey.pem")
 CERT_CHAIN = ""
 #SIGN_ALG = "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"
 DIGEST_ALG = None
@@ -106,7 +108,7 @@ CONFIG = {
                 "default": {
                     "lifetime": {"minutes": 15},
                     "attribute_restrictions": None, # means all I have
-                    "name_form": NAME_FORMAT_URI,
+                    "name_form": NAME_FORMAT_UNSPECIFIED,
                     #"entity_categories": ["swamid", "edugain"]
                 },
             },
@@ -119,12 +121,12 @@ CONFIG = {
     "key_file": full_path("pki/mykey.pem"),
     "cert_file": full_path("pki/mycert.pem"),
     "metadata": {
-        "local": [full_path("sp.xml")]
+        "local": [full_path("authbroker.xml")]
     },
     "organization": {
-        "display_name": "Rolands Identiteter",
-        "name": "Rolands Identiteter",
-        "url": "http://www.example.com",
+        "display_name": "OAR MIDAS",
+        "name": "Developers",
+        "url": "http://localhost",
     },
     "contact_person": [
         {
@@ -141,7 +143,7 @@ CONFIG = {
     # This database holds the map between a subject's local identifier and
     # the identifier returned to a SP
     "xmlsec_binary": xmlsec_path,
-    #"attribute_map_dir": "../attributemaps",
+    "attribute_map_dir": full_path("attributemaps"),
     "logging": {
         "version": 1,
         "formatters": {
