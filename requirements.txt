@@ -1,0 +1,5 @@
+python3-saml
+xmlsec
+isodate
+pyjwt
+flask

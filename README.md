@@ -11,16 +11,19 @@ into the OAR environment.  For an authenticated client/user, it can provide a
 JSON Web Token (JWT) which the client uses to connect to other OAR backend
 services. 
 
-## Contents
+## Repository Contents
 
 ```
 python       --> Python source code for the metadata and preservation
                   services
+idp          --> An implementation of a SAML IDP Login service that
+                  can be used in lieu of an external one for
+                  development and testing
 scripts      --> Tools for running the services and running all tests
 oar-build    --> general oar build system support (do not customize)
 metadata     --> The base nistoar Python source code, provided as a git
                   submodule
-docker/      --> Docker containers for building and running tests
+docker       --> Docker containers for building and running tests
 ```
 
 ## Prerequisites
@@ -37,14 +40,43 @@ git submodule update --init
 
 See oar-metadata/README.md for a list of its prerequisites.
 
-In addition to oar-metadata and its prerequisites, this package requires
-the following third-party packages:
+In addition to oar-metadata and its prerequisites, this package relies on
+a few OS packages and third-party python packages.  In particular,
+this software requires xmlsec, which is best installed via the OS
+package manager.  Be sure to include libraries that include openssl
+and development support (with .h files).  For example, under
+Debian/Ubuntu,
+```
+  apt-get install xmlsec1 libxmlsec1-openssl libxmlsec1-dev 
+```
+
+While not required to build, the Authentication Service provides
+support for launching it via `uwsgi`, so it is recommended that it be
+installed via the OS package manager as well.
+
+The following python packages are also required.
 
  * python3-saml
+ * flask
+ * pyjwt
+ * xmlsec
+ * isodate
 
-Furhter, testing and development optionally requires:
+These can installed via pip:
+```
+  pip install -r requirements.txt
+```
+
+Further, testing and development optionally requires some additional packages:
 
  * pySAML2
+ * mako
+ * cherrypy
+
+Install these via pip:
+```
+  pip install -r idp/requirements.txt
+```
 
 ### Acquiring prerequisites via Docker
 
@@ -53,8 +85,7 @@ the tests, the `docker` directory contains scripts for building a
 Docker container with these installed.  Running the `docker/run.sh`
 script will build the containers (caching them locally), start the
 container, and put the user in a bash shell in the container.  From
-there, one can run the tests or use the `jq` and `validate` tools to
-interact with metadata files.
+there, one can run the tests or run python interactively.
 
 # Building and Testing the software
 
@@ -104,8 +135,9 @@ options.
 
 ### Building and Testing Using Native Tools
 
-The Python build tool, `setup.py`, is used to build and test the
-software.  To build, type while in this directory:
+The Python build tool, `setup.py`, within the `python` subdirectory,
+is used to build and test the software.  To build, type while in this
+directory: 
 
 ```
   python setup.py build
@@ -121,9 +153,9 @@ software into it.  To install it into an arbitrary location, type
 where _/oar/home/path_ is the path to the base directory where the
 software should be installed.
 
-The `makedist` script (in [../scripts](../scripts)) will package up an
+The `makedist` script (in [scripts](scripts)) will package up an
 installed version of the software into a zip file, writing it out into
-the `../dist` directory.  Unpacking the zip file into a directory is
+the `dist` directory.  Unpacking the zip file into a directory is
 equivalent to installing it there.
 
 To run the unit tests, type:
@@ -157,10 +189,69 @@ Similarly, `testall.docker` runs the tests in a container:
 Like their non-docker counterparts, these scripts accept product names
 as arguments.
 
-## Running the services
+## About the Services
 
-The [scripts](scripts) directory contains
-[WSGI applications](https://docs.python.org/3/library/wsgiref.html) scripts.
+The primary service provided by this repository is the OAR
+Authentication Broker service.  Its job is to help the OAR system's
+browser-based applications login and interact with other backend
+services.  It works with a SAML-based IDP Login service (typically
+provided by the hosting institution) to manage the login process.
+After a user is successfully logged in, it can provide a front-end
+application with a JWT authentication token that the latter uses to
+connect securely to backend services requiring authentication.
+
+A second service is also provided for development and testing: an
+SAML IDP Login service that can be used in lieu of an external one.
+This service (located in the `idp` subdirectory) is _not_ included
+in the exportable products produced by `makedist` as described
+above.
+
+### Running the Services
+
+#### In production
+
+The Authentication Broker is implemented as a WSGI compliant
+application.  It can be launched using `uwsgi` via the
+[scripts/authservice-uwsgi.py](scripts/authservice-uwsgi.py).  (See
+[docker/authserver/entrypoint.sh](docker/authserver/entrypoint.sh) for
+an example.
+
+Like all OAR services, it is designed to pull its configuration from a
+central configuration server; however, it can be fed its configuration
+via a static file.  See
+[authservice-config.yml](docker/authserver/authservice-config.yml) as
+an example.  The configuration parameters are defined in the [in-line
+python documentation](python/nistoar/auth/wsgi/flask).
+
+### For Developement and Interactive Testing
+
+The Authentication Broker service and the Login Service can be run
+together easily via Docker by typing:
+```
+   docker/authserver/run.sh -I --bg
+```
+
+The first time this is run, all the code and Docker images are built
+automatically.  No installing of prerequisites nor building of
+products is required first.  The command then starts both services in
+the background.  The Authentication service will listen on port 9095,
+and the login service, on 8088.
+
+You can excercise that login process by visiting 
+https://localhost:8000/sso/saml/login?redirectTo=https://localhost:8000/sso/_tokeninfo.
+When you see the login screen, you can enter "upper" and "crust" as
+the username and password, respectively.  After successful login, the
+browser should display user attributes and a JWT token in JSON format;
+this is an example of data that OAR front-end applications retrieve.
+
+To stop the services, type:
+```
+   docker/authserver/run.sh -I stop
+```
+
+Type `docker/authserver/run.sh -h` and consult the [Docker container
+README](docker/authserver) for more information on running and
+configuring the services.  
 
 ## License and Disclaimer
 
