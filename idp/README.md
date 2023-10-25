@@ -45,7 +45,17 @@ documentation](https://pysaml2.readthedocs.io/) for more information.
 
 ### Adding Identities for Testing
 
-It is helpful for development to add identities to the server.
+Sometimes it is helpful for development to add identities to the server.  User
+identities are loaded from the ``idp_user.py`` file.  To add a user that you
+can log in as,
+
+1. Open the ``idp_user.py`` file in an editor.
+2. Find the ``USERS`` dictionary that provides user attribute, and add a new
+entry by copying one of the existing ones.  Each key in the dictionary is a
+user's username that gets entered into the login page.
+3. Add a password for the new user into the ``PASSWD`` dictionary.
+4. Restart the IDP
+
 
 _(under construction)_
 
