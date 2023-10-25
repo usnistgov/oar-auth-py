@@ -168,7 +168,7 @@ function stop_server {
 }
 
 if [ "$ACTION" = "stop" ]; then
-    echo Shutting down the midas server...
+    echo Shutting down the IDP login server...
     stop_server || true
 else
     echo '+' docker run $ENVOPTS $VOLOPTS -p $PORT:8088 --rm \
