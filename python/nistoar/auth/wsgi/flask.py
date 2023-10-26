@@ -84,14 +84,15 @@ def create_app(config: Mapping=None, data_dir=None):
                             See the :py:mod:`module doc<nistoar.auth.wsgi.flask>` for 
                             an enumeration of the supported properties.
     """
-    if data_dir:
-        # this will override any value in the config
+    if data_dir or not config.get('data_dir'):
+        # data_dir will override what's in config
         config = dict(config)
+        if not data_dir:
+            data_dir = find_auth_data_dir(config)
+        data_dir = Path(data_dir).resolve()
         config['data_dir'] = str(data_dir)
     else:
-        data_dir = find_auth_data_dir(config)
-    if data_dir:
-        data_dir = Path(data_dir).resolve()
+        data_dir = Path(config.get('data_dir')).resolve()
 
     config = expand_config(config)
     missing = []
