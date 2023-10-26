@@ -11,7 +11,7 @@ repository's top directory, just type:
 docker/idpserver/run.sh
 ```
 
-Type ``docker/idpserver/run.sh -h`` for additional informoation on more
+Type ``docker/idpserver/run.sh -h`` for additional information on more
 start-up options.
 
 Running via the container negates the need to install any dependencies.  The

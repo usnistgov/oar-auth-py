@@ -2,6 +2,7 @@ import os, json, pdb, sys, tempfile, re
 import unittest as test
 from pathlib import Path
 from io import StringIO
+from copy import deepcopy
 
 from nistoar.auth.wsgi import flask as flaskapp
 from nistoar.auth.wsgi import config
@@ -117,6 +118,43 @@ class TestSupportFunctions(test.TestCase):
         self.assertTrue(flaskapp.checkAllowedUrls("https://mdsdev.nist.gov/dmpui", allowed))
         self.assertTrue(not flaskapp.checkAllowedUrls("https://mdsdev.nist.gov/dapui", allowed))
         self.assertTrue(not flaskapp.checkAllowedUrls("https://mdsdev.nist.gov:9000/dmpui", allowed))
+
+    def test_make_testuser_credentials(self):
+        crds = flaskapp.make_testuser_credentials({})
+
+        self.assertEqual(crds.id, "testuser")
+        self.assertEqual(crds.given_name, "Test")
+        self.assertEqual(crds.family_name, "User")
+        self.assertEqual(crds.email, "test.user@example.com")
+        self.assertEqual(crds['userOU'], "unknown")
+        self.assertEqual(crds['displayName'], "TestUser")
+        self.assertEqual(crds['role'], "not-set")
+        self.assertEqual(crds['winId'], "testuser")
+        self.assertIsNone(crds.expiration_time)
+        self.assertEqual(crds.expiration, "(unset)")
+        self.assertFalse(crds.expired())
+        self.assertTrue(crds.is_authenticated())
+        
+        cfg = dict(id="gurn", given_name="Gurn", family_name="Cranston",
+                   email="gurn.cranston@goob.io", display_name="Gurn Cranston")
+        crds = flaskapp.make_testuser_credentials(cfg)
+        
+        self.assertEqual(crds.id, "gurn")
+        self.assertEqual(crds.given_name, "Gurn")
+        self.assertEqual(crds.family_name, "Cranston")
+        self.assertEqual(crds.email, "gurn.cranston@goob.io")
+        self.assertEqual(crds.email, "gurn.cranston@goob.io")
+        self.assertEqual(crds['userOU'], "unknown")
+        self.assertEqual(crds['displayName'], "Gurn Cranston")
+        self.assertEqual(crds['role'], "not-set")
+        self.assertEqual(crds['winId'], "gurn")
+        self.assertIsNone(crds.expiration_time)
+        self.assertEqual(crds.expiration, "(unset)")
+        self.assertFalse(crds.expired())
+        self.assertTrue(crds.is_authenticated())
+
+
+            
 
 class TestAppHandlers(test.TestCase):
 
@@ -237,6 +275,36 @@ class TestAppRoutes(test.TestCase):
 
     def setUp(self):
         self.app = flaskapp.create_app(self.cfg)
+
+    def test_disabled(self):
+        cfg = deepcopy(self.cfg)
+        cfg['disabled_saml_login'] = {
+            "engaged": True,
+            "testuser": { "id": "goober" }
+        }
+        self.app = flaskapp.create_app(cfg)
+
+        self.assertTrue(self.app.config['disabled_saml_login']['engaged'])
+        self.assertEqual(self.app.config['disabled_saml_login']['testuser']['id'],
+                         "goober")
+
+        with self.app.test_client(self.app) as cli:
+            resp = cli.get("/sso/_logininfo", follow_redirects=False)
+            self.assertEqual(resp.status_code, 200)  # logged in as goober
+            self.assertEqual(resp.json['userId'], "goober")
+            self.assertEqual(resp.json['userLastName'], "User")
+            self.assertNotIn('token', resp.json)
+
+            resp = cli.get("/sso/_tokeninfo", follow_redirects=False)
+            self.assertEqual(resp.status_code, 200)  # logged in as goober
+            self.assertEqual(resp.json['userId'], "goober")
+            self.assertEqual(resp.json['userLastName'], "User")
+            self.assertIn('token', resp.json)
+
+        
+
+        
+        
 
     def test_login(self):
         with self.app.test_client(self.app) as cli:

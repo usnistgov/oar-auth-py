@@ -128,6 +128,9 @@ def create_app(config: Mapping=None, data_dir=None):
     if not config.get('allowed_service_endpoints'):
         app.logger.warning("No allowed service endpoints set in configuration")
 
+    if config.get("disable_saml_login", {}).get("engaged") is True:
+        app.logger.warning("SAML-based logins have been disabled!")
+
     app.config.update(config)  # sets SECRET_KEY
 
     @app.route('/sso/saml/login', methods=['GET'])
@@ -316,13 +319,24 @@ def create_app(config: Mapping=None, data_dir=None):
         if not creds.is_authenticated() or creds.expired():
             return _handle_unauthenticated("Client is not authenticated", "Unauthenticated")
 
-        return creds.to_json(), 200
+        resp = make_response(creds.to_json(), 200)
+        resp.content_type = "application/json"
+        return resp
 
     def get_credentials() -> Credentials:
         """
         generate a credentials object for the currently logged in user.  
         :rtype:  Credentials
         """
+        disabled = current_app.config.get("disabled_saml_login")
+        if disabled and disabled.get("engaged") is True:
+            try:
+                return make_testuser_credentials(disabled.get('testuser',{}))
+            except ConfigurationException as ex:
+                current_app.logger.failure("Failed to create testuser "
+                                           "credentials: %s", str(ex))
+                raise
+
         if session_authenticated(session):
             return make_credentials(session.get('samlUserAttrs', {}), get_expiration(session))
 
@@ -383,7 +397,9 @@ def create_app(config: Mapping=None, data_dir=None):
             return _handle_unauthenticated("Client is not authenticated", "Unauthenticated")
 
         creds.set_token()
-        return creds.to_json(), 200
+        resp = make_response(creds.to_json(), 200)
+        resp.content_type = "application/json"
+        return resp
 
     @app.route('/sso/metadata/')
     def metadata():
@@ -464,6 +480,18 @@ def checkAllowedUrls(url: str, allowed: List[str]):
         if url.startswith(listedurl):
             return True
     return False
+
+def make_testuser_credentials(usercfg):
+    attrs = {
+        "userName":     usercfg.get("given_name", "Test"),
+        "userLastName": usercfg.get("family_name", "User"),
+        "userEmail":    usercfg.get("email", "test.user@example.com"),
+        "userOU":       usercfg.get("ou", "unknown"),
+        "displayName":  usercfg.get("display_name", "TestUser"),
+        "role":         usercfg.get("role", "not-set"),
+        "winId":        usercfg.get("id", usercfg.get("id", "testuser")),
+    }
+    return Credentials(usercfg.get("id", "testuser"), attrs)
 
 def _handle_error(reason: str, code: int=400, status: str=None, **kwargs):
     """
