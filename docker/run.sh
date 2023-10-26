@@ -117,7 +117,7 @@ while [ "$1" != "" ]; do
         python)
             comptypes="$comptypes $1"
             ;;
-        pdr-py)
+        auth-py)
             wordin python $comptypes || comptypes="$comptypes python"
             pyargs=(${pyargs[@]} $1)
             ;;
