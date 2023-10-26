@@ -106,6 +106,8 @@ class TestSupportFunctions(test.TestCase):
         self.assertIs(auth.get_settings().get_security_data()['wantNameId'], True)
         self.assertEqual(auth._request_data['script_name'], "/sso")
         self.assertEqual(auth.get_settings().get_cert_path(), os.path.join(sysdir, "certs")+"/")
+
+        self.assertTrue(os.path.isdir(auth.get_settings().get_cert_path()))
         
     def test_checkAllowedUrls(self):
         allowed = [

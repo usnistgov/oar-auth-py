@@ -116,8 +116,8 @@ def expand_config(config: Mapping=None, def_config: Mapping=None) -> Mapping:
         if not isinstance(config, Mapping):
             raise TypeError("expand_config(): config parameter is not a dictionary: " +
                             str(type(config)))
-        if 'data_dir' in config:
-            data_dir = find_auth_data_dir(config)
+        if 'data_dir' not in config:
+            data_dir = Path(find_auth_data_dir(config)).resolve()
 
     if not def_config:
         def_config = data_dir / DEFAULT_CONFIG_FILE
