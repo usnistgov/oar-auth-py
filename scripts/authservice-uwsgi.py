@@ -25,6 +25,9 @@ This script also pays attention to the following environment variables:
    OAR_CONFIG_APP      The name of the component/application to retrieve 
                           configuration data for (default: pdr-resolve);
                           this is only used if OAR_CONFIG_SERVICE is used.
+   OAR_LOG_DIR         The directory to place the application log into.  This 
+                          will override the value of 'logdir' in the 
+                          configuration, if set.
 """
 
 import os, sys, logging, copy
@@ -74,6 +77,10 @@ elif config.service:
 
 else:
     raise config.ConfigurationException("authservice: nist-oar configuration not provided")
+
+if os.environ.get('OAR_LOG_DIR'):
+    # Environment is overriding the location of the app log
+    cfg['logdir'] = os.environ['OAR_LOG_DIR']
 
 # create the WSGI application; note: this also configures the log.
 application = wsgi.create_app(cfg, uwsgi.opt.get("oar_auth_data_dir"))
