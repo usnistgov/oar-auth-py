@@ -29,4 +29,18 @@ saml:
       binding: urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect
     x509cert: "MIIC1DCCAbygAwIBAgIQSlxPoI5TqYJLmB7GvyEWkTANBgkqhkiG9w0BAQsFADAmMSQwIgYDVQQDExtBREZTIFNpZ25pbmcgLSBzdHMubmlzdC5nb3YwHhcNMjAwOTMwMTY0OTU2WhcNMjUxMDI5MTY0OTU2WjAmMSQwIgYDVQQDExtBREZTIFNpZ25pbmcgLSBzdHMubmlzdC5nb3YwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQC3iXfPood/b6lBIjgZcKMy638oaUkLGxu2Nh75p0xAJrlhLVzR5lkARsmWxb0yfa17xdgqdguh88QlofEu7lnOTmaXKCvmiUYQZzq+BW6mgO0RxYssRTIaq9uNTKnPvEXFdbN42oVX98gu3ViZlqWF077mZe0fEv5/2bGZLG5TBhollRZOnHokpFJKhrFLu5QEDzl9MZnUPttVKnNwYAeQGQaqjYCNkIDBCwE2lLKEK8F1qhicE6pECN1zVgsgKYxm0PNOGNnY8/l4f5dogJz6P6LNOhUDy5JacdzIdh/bwuPuN3B08QNmp6152FphBQmdcHdqD7azfYqsj96761nZAgMBAAEwDQYJKoZIhvcNAQELBQADggEBABGcRLfJNtRYfZLVT4g+dCUxselA5z0iWYWQvJ0Ga04ni4iVI0FiM1yshe/bmj6fBkl5WZbutrqfMw1MY+v0cy9HuLsLeed+y6e9uYHHJJkXwYVdLMQaF9SJI9+h00ge5t3zHVnBnLMGEb7+JhzWOt1sgEPPLE5+fqIGbWmvvdd9RrQ6nR2ijcCKqYSnoeDMS+BFTyFoSBrjkh0+9JbSngaQLjlQcDPGOx2g7wqQDqtsJUi1v8oNl3Jvdi7tlUZmg2/NyJ+J5NdLEBeVnFW0yzPHm8Nhh3g3In1eRDzJeoAfygNY1rCKBP2wP6PIkhOaBp+Dc+F1QkfFv32uyt2/kog="
 
+  contactPerson: 
+    technical: 
+      givenName: Authentication admin
+      emailAddress: deoyani.nandrekarheinis@nist.gov
+  
+    support: 
+      givenName: Deoyani Heinis
+      emailAddress: deoyani.nandrekarheinis@nist.gov
+  organization: 
+    en-US: 
+      name: ODI
+      displayname: ODI MML NIST
+      url: https://data.nist.gov
+
    
