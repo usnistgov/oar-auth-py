@@ -205,11 +205,11 @@ else
                         --name=$CONTAINER_NAME $DETACH $PACKAGE_NAME/authserver
     docker run $ENVOPTS $VOLOPTS -p 127.0.0.1:$PORT:9095/tcp --rm \
                --name=$CONTAINER_NAME $DETACH $PACKAGE_NAME/authserver
-fi
 
-[ -z "$DETACH" ] || {
-    echo
-    echo Started Authentication Broker in background \(see logs with \"docker logs authserver\"\)
-    echo
-}
+    [ -z "$DETACH" ] || {
+        echo
+        echo Started Authentication Broker in background \(see logs with \"docker logs authserver\"\)
+        echo
+    }
+fi
 

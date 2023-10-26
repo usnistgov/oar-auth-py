@@ -175,10 +175,10 @@ else
                         --name=$CONTAINER_NAME $DETACH $PACKAGE_NAME/idpserver
     docker run $ENVOPTS $VOLOPTS -p $PORT:8088 --rm \
            --name=$CONTAINER_NAME $DETACH $PACKAGE_NAME/idpserver
-fi
 
-[ -z "$DETACH" ] || {
-    echo
-    echo Started IDP Login service in background \(see logs with \"docker logs idpserver\"\)
-    echo
-}
+    [ -z "$DETACH" ] || {
+        echo
+        echo Started IDP Login service in background \(see logs with \"docker logs idpserver\"\)
+        echo
+    }
+fi
