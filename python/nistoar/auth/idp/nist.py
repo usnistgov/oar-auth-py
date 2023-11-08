@@ -45,7 +45,7 @@ def make_credentials(samlattrs: Mapping, expiration: Union[str,int,float]=None):
         "userOU":       samlattrs.get(ATTR_NAME.OU,     ["not-set"])[0], # 
         "role":         samlattrs.get(ATTR_NAME.ROLE,   ["not-set"])[0],
         "displayName":  samlattrs.get(ATTR_NAME.DNAME,  ["unknown"])[0],
-        "qualifiedName": samlattrs.get(ATTR_NAME.DNAME, ["unknown"])[0],
+        "qualifiedName": samlattrs.get(ATTR_NAME.QNAME, ["unknown"])[0],
         "userGroup":    samlattrs.get(ATTR_NAME.GROUP,  ["not-set"])[0],
         "winId":        samlattrs.get(ATTR_NAME.WINID,  ["unknown"])[0],
     }
@@ -59,7 +59,7 @@ def make_credentials(samlattrs: Mapping, expiration: Union[str,int,float]=None):
         try:
             expiration = datetime.fromisoformat(expiration).timestamp()
         except ValueError as ex:
-            raise ValueError("make_credentials(): expiration param not an ISO date")
+            raise ValueError("make_credentials(): expiration param not an ISO date: "+expiration)
 
     return Credentials(id, attrs, expiration)
 
