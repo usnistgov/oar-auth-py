@@ -291,13 +291,13 @@ class TestAppRoutes(test.TestCase):
                          "goober")
 
         with self.app.test_client(self.app) as cli:
-            resp = cli.get("/sso/_logininfo", follow_redirects=False)
+            resp = cli.get("/sso/auth/_logininfo", follow_redirects=False)
             self.assertEqual(resp.status_code, 200)  # logged in as goober
             self.assertEqual(resp.json['userId'], "goober")
             self.assertEqual(resp.json['userLastName'], "User")
             self.assertNotIn('token', resp.json)
 
-            resp = cli.get("/sso/_tokeninfo", follow_redirects=False)
+            resp = cli.get("/sso/auth/_tokeninfo", follow_redirects=False)
             self.assertEqual(resp.status_code, 200)  # logged in as goober
             self.assertEqual(resp.json['userId'], "goober")
             self.assertEqual(resp.json['userLastName'], "User")
@@ -350,12 +350,12 @@ class TestAppRoutes(test.TestCase):
 
     def test_get_user_info(self):
         with self.app.test_client(self.app) as cli:
-            resp = cli.get("/sso/_logininfo")
+            resp = cli.get("/sso/auth/_logininfo")
             self.assertEqual(resp.status_code, 401)  # not logged in
 
     def test_token(self):
         with self.app.test_client(self.app) as cli:
-            resp = cli.get("/sso/_tokeninfo")
+            resp = cli.get("/sso/auth/_tokeninfo")
             self.assertEqual(resp.status_code, 401)  # not logged in
 
     def test_metadata(self):
