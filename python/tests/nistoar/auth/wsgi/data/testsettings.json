@@ -1,0 +1,77 @@
+{
+    "allowed_service_endpoints": [
+        "https://localhost:4200/",
+        "https://localhost/"
+    ],
+    "flask": {
+        "SECRET_KEY": "ssh!"
+    },
+    "jwt": {
+        "secret": "another ssh!",
+        "lifetime": 86400
+    },
+    "saml": {
+        "strict": true,
+        "debug": false,
+        "sp": {
+            "entityId": "https://p932439.nist.gov:8000/sso/metadata/",
+            "assertionConsumerService": {
+                "url": "https://p932439.nist.gov:8000/sso/acs",
+                "binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
+            },
+            "singleLogoutService": {
+                "url": "https://p932439.nist.gov:8000/?sls",
+                "binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
+            },
+            "NameIDFormat": "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified",
+            "x509cert": "",
+            "privateKey": ""
+        },
+        "idp": {
+            "entityId": "https://sts.windows.net/inst_id/",
+            "singleSignOnService": {
+                "url": "https://login.microsoftonline.com/inst_id/saml2",
+                "binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
+            },
+            "singleLogoutService": {
+                "url": "https://login.microsoftonline.com/insts_id/saml2",
+                "binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
+            },
+            "x509cert": ""
+        },
+        "security": {
+            "nameIdEncrypted": false,
+            "authnRequestsSigned": false,
+            "logoutRequestSigned": false,
+            "logoutResponseSigned": false,
+            "signMetadata": false,
+            "wantMessagesSigned": false,
+            "wantAssertionsSigned": false,
+            "wantNameId" : true,
+            "wantNameIdEncrypted": false,
+            "wantAssertionsEncrypted": false,
+            "allowSingleLabelDomains": false,
+            "signatureAlgorithm": "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256",
+            "digestAlgorithm": "http://www.w3.org/2001/04/xmlenc#sha256",
+            "rejectDeprecatedAlgorithm": true,
+            "requestedAuthnContext": false
+        },
+        "contactPerson": {
+            "technical": {
+                "givenName": "Authentication admin",
+                "emailAddress": "deoyani.nandrekarheinis@nist.gov"
+            },
+            "support": {
+                "givenName": "Deoyani Heinis",
+                "emailAddress": "deoyani.nandrekarheinis@nist.gov"
+            }
+        },
+        "organization": {
+            "en-US": {
+                "name": "ODI",
+                "displayname": "ODI MML NIST",
+                "url": "https://data.nist.gov"
+            }
+        }
+    }
+}

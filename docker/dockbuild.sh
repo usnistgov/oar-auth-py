@@ -24,7 +24,7 @@ PACKAGE_NAME=oar-auth-py
 ## depends the former ones).  
 #
 DEP_DOCKER_IMAGE_DIRS="pymongo jqfromsrc ejsonschema pyenv"
-EXEC_DOCKER_IMAGE_DIRS="build-test"
+EXEC_DOCKER_IMAGE_DIRS="build-test authserver idpserver"
 
 [ -d "$codedir/metadata/docker" ] || {
     echo ${prog}: Missing metadata submodule
@@ -53,4 +53,12 @@ fi
 if { echo " $BUILD_IMAGES " | grep -qs " build-test "; }; then
     echo '+' docker build $BUILD_OPTS -t $PACKAGE_NAME/build-test build-test | logit
     docker build $BUILD_OPTS -t $PACKAGE_NAME/build-test build-test 2>&1 | logit
+fi
+if { echo " $BUILD_IMAGES " | grep -qs " authserver "; }; then
+    echo '+' docker build $BUILD_OPTS -t $PACKAGE_NAME/authserver authserver | logit
+    docker build $BUILD_OPTS -t $PACKAGE_NAME/authserver authserver 2>&1 | logit
+fi
+if { echo " $BUILD_IMAGES " | grep -qs " idpserver "; }; then
+    echo '+' docker build $BUILD_OPTS -t $PACKAGE_NAME/idpserver idpserver | logit
+    docker build $BUILD_OPTS -t $PACKAGE_NAME/idpserver idpserver 2>&1 | logit
 fi
