@@ -293,14 +293,14 @@ class TestAppRoutes(test.TestCase):
         with self.app.test_client(self.app) as cli:
             resp = cli.get("/sso/auth/_logininfo", follow_redirects=False)
             self.assertEqual(resp.status_code, 200)  # logged in as goober
-            self.assertEqual(resp.json['userId'], "goober")
-            self.assertEqual(resp.json['userLastName'], "User")
+            self.assertEqual(resp.json['userDetails']['userId'], "goober")
+            self.assertEqual(resp.json['userDetails']['userLastName'], "User")
             self.assertNotIn('token', resp.json)
 
             resp = cli.get("/sso/auth/_tokeninfo", follow_redirects=False)
             self.assertEqual(resp.status_code, 200)  # logged in as goober
-            self.assertEqual(resp.json['userId'], "goober")
-            self.assertEqual(resp.json['userLastName'], "User")
+            self.assertEqual(resp.json['userDetails']['userId'], "goober")
+            self.assertEqual(resp.json['userDetails']['userLastName'], "User")
             self.assertIn('token', resp.json)
 
         
