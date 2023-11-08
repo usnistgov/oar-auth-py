@@ -10,22 +10,22 @@ from typing import Union
 from ..creds import Credentials
 
 _MS_BASE_URI = "http://schemas.microsoft.com/ws/"
-_SOAP_BASE_URI = "http://schemas.xmlsoap.org/ws/"
+_SOAP_BASE_URI = "http://schemas.xmlsoap.org/"
 
 AttributeNames = namedtuple("AttributeNames",
                             "ID EMAIL QNAME DNAME GIVEN FAMILY OU DIVNO ROLE GROUP WINID".split())
 ATTR_NAME = AttributeNames(
-    ID     = _SOAP_BASE_URI + "2005/05/identity/claims/nameidentifier",
-    EMAIL  = _SOAP_BASE_URI + "2005/05/identity/claims/emailaddress",
-    QNAME  = _SOAP_BASE_URI + "2005/05/identity/claims/name",
-    DNAME  = _SOAP_BASE_URI + "2005/05/identity/claims/displayname",
-    GIVEN  = _SOAP_BASE_URI + "2005/05/identity/claims/givenname",
-    FAMILY = _SOAP_BASE_URI + "2005/05/identity/claims/surname",
-    OU     = _SOAP_BASE_URI + "2005/05/identity/claims/nistOU",
-    DIVNO  = _SOAP_BASE_URI + "2008/05/identity/claims/nistDivisionNumber",
+    ID     = _SOAP_BASE_URI + "ws/2005/05/identity/claims/nameidentifier",
+    EMAIL  = _SOAP_BASE_URI + "ws/2005/05/identity/claims/emailaddress",
+    QNAME  = _SOAP_BASE_URI + "ws/2005/05/identity/claims/name",
+    DNAME  = _SOAP_BASE_URI + "identity/claims/displayname",
+    GIVEN  = _SOAP_BASE_URI + "ws/2005/05/identity/claims/givenname",
+    FAMILY = _SOAP_BASE_URI + "ws/2005/05/identity/claims/surname",
+    OU     = _SOAP_BASE_URI + "ws/2005/05/identity/claims/nistOU",
+    DIVNO  = _SOAP_BASE_URI + "ws/2005/05/identity/claims/nistDivisionNumber",
     ROLE   = _MS_BASE_URI   + "2008/06/identity/claims/role",
-    GROUP  = "http://schemas.xmlsoap.org/claims/Group",
-    WINID  = _SOAP_BASE_URI + "2005/05/identity/claims/windowsaccountname"
+    GROUP  = _SOAP_BASE_URI + "claim/Group",
+    WINID  = _SOAP_BASE_URI + "ws/2005/05/identity/claims/windowsaccountname"
 )
 
 def make_credentials(samlattrs: Mapping, expiration: Union[str,int,float]=None):
