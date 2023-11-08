@@ -24,7 +24,7 @@ saml:
     singleLogoutService:
       url: https://localhost:9095/sso/saml/sls
       binding: urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect
-    NameIDFormat: urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified
+    NameIDFormat: urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified
     x509cert: ""
     privateKey: ""
   idp:

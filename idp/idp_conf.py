@@ -11,6 +11,7 @@ from saml2 import BINDING_URI
 from saml2.saml import NAME_FORMAT_UNSPECIFIED
 from saml2.saml import NAMEID_FORMAT_PERSISTENT
 from saml2.saml import NAMEID_FORMAT_TRANSIENT
+from saml2.saml import NAMEID_FORMAT_UNSPECIFIED
 
 
 try:
@@ -108,7 +109,7 @@ CONFIG = {
                 "default": {
                     "lifetime": {"minutes": 15},
                     "attribute_restrictions": None, # means all I have
-                    "name_form": NAME_FORMAT_UNSPECIFIED,
+                    "name_form": NAMEID_FORMAT_UNSPECIFIED,
                     #"entity_categories": ["swamid", "edugain"]
                 },
             },

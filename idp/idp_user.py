@@ -4,30 +4,36 @@ USERS = {
         "surname": "Astin",
         "emailAddress": "allen.astin@nist.gov",
         "userOU": "OotD",
-        "windowsAccountName": "nist\\ava0",
+        "windowsAccountName": "ava0",
         "nameId": "upper",
-        "name": "Allen V. Astin",
-        "role": "Former NIST Director"
+        "displayName": "Allen V. Astin",
+        "name": "ava0@nist.gov",
+        "role": "Former NIST Director",
+        "group": "DEAD_NIST_ACCOUNTS"
     },
     "director": {
         "givenName": "Laurie",
         "surname": "Locascio",
         "emailAddress": "laurie.locascio@nist.gov",
         "userOU": "OotD",
-        "windowsAccountName": "nist\\lel0",
+        "windowsAccountName": "lel0",
         "nameId": "director",
-        "name": "Laurie Locascio",
-        "role": "NIST Director"
+        "displayName": "Laurie Locascio",
+        "name": "lel0@nist.gov",
+        "role": "NIST Director",
+        "group": "ALL_NIST_ACCOUNTS"
     },
     "testuser": {
         "givenName": "Test",
         "surname": "User",
         "emailAddress": "testuser@test.com",
         "userOU": "MML",
-        "windowsAccountName": "nist\\tju0",
+        "windowsAccountName": "tju0",
         "nameId": "testuser",
-        "name": "TestUser",
-        "role": "functionary"
+        "name": "tju0@nist.gov",
+        "displayName": "Test User",
+        "role": "functionary",
+        "group": "ALL_NIST_ACCOUNTS"
     }
 }
 
