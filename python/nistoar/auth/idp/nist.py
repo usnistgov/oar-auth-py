@@ -33,7 +33,6 @@ def make_credentials(samlattrs: Mapping, expiration: Union[str,int,float]=None):
     create a Credentials object based on the results of SAML authentication 
     that can be returned to our service clients.
     """
-    print("saml attrs:\n  "+"\n  ".join([k for k in samlattrs.keys()]))
     want = [ ATTR_NAME.ID, ATTR_NAME.EMAIL, ATTR_NAME.QNAME, ATTR_NAME.DNAME,
              ATTR_NAME.GIVEN, ATTR_NAME.FAMILY, ATTR_NAME.OU, ATTR_NAME.DIVNO,
              ATTR_NAME.ROLE, ATTR_NAME.GROUP, ATTR_NAME.WINID ]
@@ -50,7 +49,7 @@ def make_credentials(samlattrs: Mapping, expiration: Union[str,int,float]=None):
         "userGroup":    samlattrs.get(ATTR_NAME.GROUP,  ["not-set"])[0],
         "winId":        samlattrs.get(ATTR_NAME.WINID,  ["unknown"])[0],
     }
-    print("wanted attrs: "+str(attrs))
+
     for name in samlattrs:
         if name not in want:
             attrs[name] = samlattrs.get(name)[0]
