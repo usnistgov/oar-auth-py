@@ -23,9 +23,9 @@ TESTSCRIPTS = [
 ]
 
 def find_scripts():
-    return ['../scripts/'+f       for f in SCRIPTS] + \
-           ['../scripts/tests/'+f for f in os.listdir("../scripts/tests")
-                                  if f.startswith("test_") and not f.endswith("~")]
+    return ['../scripts/'+f       for f in SCRIPTS] # + \
+#           ['../scripts/tests/'+f for f in os.listdir("../scripts/tests")
+#                                  if f.startswith("test_") and not f.endswith("~")]
 
 def set_version():
     try:

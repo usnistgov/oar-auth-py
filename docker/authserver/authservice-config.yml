@@ -1,4 +1,13 @@
 allowed_service_endpoints:  [ https://localhost, http://localhost ]
+disabled_saml_login:
+  engaged: false
+  testuser:
+    id: testuser
+    given_name:  Test
+    family_name: User
+    ou: MML
+    email: test.user@nist.gov
+    display_name: TestUser
 flask:
   SECRET_KEY: 904ddb103ff8c274c761d6472e9179d5034ad17b
 jwt:
@@ -15,7 +24,7 @@ saml:
     singleLogoutService:
       url: https://localhost:9095/sso/saml/sls
       binding: urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect
-    NameIDFormat: urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified
+    NameIDFormat: urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified
     x509cert: ""
     privateKey: ""
   idp:

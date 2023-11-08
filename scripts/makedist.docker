@@ -20,5 +20,5 @@ export DOCKERDIR=$CODEDIR/docker
 
 $DOCKERDIR/dockbuild.sh
 # Run the main makedist in the dockerdir
-echo "Run makedist for oar-pdr-py"
+echo "Run makedist for oar-auth-py"
 exec $DOCKERDIR/run.sh build "$@"
