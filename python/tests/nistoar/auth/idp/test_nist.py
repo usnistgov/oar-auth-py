@@ -7,7 +7,7 @@ class Test_NIST_IDP(test.TestCase):
 
     def setUp(self):
         self.samlatts = {
-            idp.ATTR_NAME.ID:     ["jerk"],
+            idp.ATTR_NAME.WINID:  ["jerk"],
             idp.ATTR_NAME.EMAIL:  ["jerk@nist.gov"],
             idp.ATTR_NAME.GIVEN:  ["Gurn"],
             idp.ATTR_NAME.FAMILY: ["Cranston"],

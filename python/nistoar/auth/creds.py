@@ -310,18 +310,39 @@ class Credentials(_FallbackDict):
         """
         export this credential as a JSON-encoded string
         """
-        return json.dumps(OrderedDict(self), indent=indent)
+        # this serialization provide interoperability with previous Java service
+        userdetails = OrderedDict(self)
+        for key in "token expires since".split():
+            if key in userdetails:
+                del userdetails[key]
+                
+        out = OrderedDict([ ("userDetails", userdetails) ])
+        
+        if self.get('token'):
+            out['token'] = self['token']
+        if self.expiration_time:
+            out['token'] = self.expiration_time
+        if self.get('since'):
+            out['since'] = self.get('since')
+            
+        return json.dumps(out, indent=indent)
 
     def write_json(self, ostrm, indent=2):
         """
         write this credential to an output stream as JSON-encoded data
         """
-        json.dump(OrderedDict(self), ostrm, indent=indent)
+        ostrm.write(self.to_json(indent))
 
     @classmethod
     def from_json_dict(cls, obj: Mapping):
-        id = obj.get("userId", "anonymous")
-        return cls(id, obj)
+        ud = OrderedDict(obj.get("userDetails", {}))
+        id = ud.get("userId", "anonymous")
+        if "userId" in ud:
+            del ud['userId']
+        for key in "token expires since".split():
+            if key in obj:
+                ud[key] = obj[key]
+        return cls(id, ud)
 
     def create_token(self, lifetime=None) -> str:
         """

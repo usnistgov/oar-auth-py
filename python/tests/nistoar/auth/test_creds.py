@@ -237,30 +237,33 @@ class TestCredentials(test.TestCase):
         self.crd = creds.Credentials("me", self.atts)
 
         data = json.loads(self.crd.to_json(), object_pairs_hook=OrderedDict)
-        self.assertEqual(list(data.keys()),
+        self.assertEqual(list(data.keys()), ['userDetails'])
+        self.assertEqual(list(data['userDetails'].keys()),
                          ['userId', 'userEmail', 'userName', 'userLastName',
                           'userOU'])
-        self.assertEqual(data['userId'], 'me')
-        self.assertEqual(data['userEmail'], 'not@set')
+        self.assertEqual(data['userDetails']['userId'], 'me')
+        self.assertEqual(data['userDetails']['userEmail'], 'not@set')
 
         fd = StringIO()
         self.crd.write_json(fd)
         data = json.loads(fd.getvalue())
-        self.assertEqual(list(data.keys()),
+        self.assertEqual(list(data.keys()), ['userDetails'])
+        self.assertEqual(list(data['userDetails'].keys()),
                          ['userId', 'userEmail', 'userName', 'userLastName',
                           'userOU'])
-        self.assertEqual(data['userId'], 'me')
-        self.assertEqual(data['userEmail'], 'not@set')
+        self.assertEqual(data['userDetails']['userId'], 'me')
+        self.assertEqual(data['userDetails']['userEmail'], 'not@set')
 
         self.crd['goob'] = "gurn"
         self.crd.set_token()
         
         data = json.loads(self.crd.to_json(), object_pairs_hook=OrderedDict)
-        self.assertEqual(list(data.keys()),
+        self.assertEqual(list(data.keys()), ['userDetails', 'token'])
+        self.assertEqual(list(data['userDetails'].keys()),
                          ['userId', 'userEmail', 'userName', 'userLastName',
-                          'userOU', 'goob', 'token'])
-        self.assertEqual(data['userId'], 'me')
-        self.assertEqual(data['userEmail'], 'not@set')
+                          'userOU', 'goob'])
+        self.assertEqual(data['userDetails']['userId'], 'me')
+        self.assertEqual(data['userDetails']['userEmail'], 'not@set')
         self.assertEqual(data['token'], self.crd['token'])
         
         crd = creds.Credentials.from_json_dict(data)

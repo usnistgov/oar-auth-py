@@ -310,7 +310,7 @@ def create_app(config: Mapping=None, data_dir=None):
             
         return redirect(return_to)
 
-    @app.route('/sso/_logininfo')
+    @app.route('/sso/auth/_logininfo')
     def get_user_info():
         """
         return to the client information about the currently logged-in user.
@@ -385,7 +385,7 @@ def create_app(config: Mapping=None, data_dir=None):
             return True
         return False
 
-    @app.route('/sso/_tokeninfo')
+    @app.route('/sso/auth/_tokeninfo')
     def get_token():
         """
         generate a credentials object for the currently logged in user that includes
