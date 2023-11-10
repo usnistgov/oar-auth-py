@@ -26,7 +26,7 @@ MAP = {
         "http://schemas.microsoft.com/ws/2008/06/identity/claims/primarygroupsid": "primaryGroupSid",
         "http://schemas.microsoft.com/ws/2008/06/identity/claims/primarysid": "primarySid",
         "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/windowsaccountname": "windowsAccountName",
-        "http://schemas.xmlsoap.org/identity/claims/displayname": "displayName",
+        "http://schemas.microsoft.com/identity/claims/displayname": "displayName",
     },
     "to": {
         "emailAddress": "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress",
@@ -47,6 +47,6 @@ MAP = {
         "primaryGroupSid": "http://schemas.microsoft.com/ws/2008/06/identity/claims/primarygroupsid",
         "primarySid": "http://schemas.microsoft.com/ws/2008/06/identity/claims/primarysid",
         "windowsAccountName": "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/windowsaccountname",
-        "displayName": "http://schemas.xmlsoap.org/identity/claims/displayname",
+        "displayName": "http://schemas.microsoft.com/identity/claims/displayname",
     },
 }

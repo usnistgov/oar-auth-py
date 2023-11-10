@@ -9,7 +9,7 @@ from typing import Union
 
 from ..creds import Credentials
 
-_MS_BASE_URI = "http://schemas.microsoft.com/ws/"
+_MS_BASE_URI = "http://schemas.microsoft.com/"
 _SOAP_BASE_URI = "http://schemas.xmlsoap.org/"
 
 AttributeNames = namedtuple("AttributeNames",
@@ -18,12 +18,12 @@ ATTR_NAME = AttributeNames(
     ID     = _SOAP_BASE_URI + "ws/2005/05/identity/claims/nameidentifier",
     EMAIL  = _SOAP_BASE_URI + "ws/2005/05/identity/claims/emailaddress",
     QNAME  = _SOAP_BASE_URI + "ws/2005/05/identity/claims/name",
-    DNAME  = _SOAP_BASE_URI + "identity/claims/displayname",
+    DNAME  = _MS_BASE_URI   + "identity/claims/displayname",
     GIVEN  = _SOAP_BASE_URI + "ws/2005/05/identity/claims/givenname",
     FAMILY = _SOAP_BASE_URI + "ws/2005/05/identity/claims/surname",
     OU     = _SOAP_BASE_URI + "ws/2005/05/identity/claims/nistOU",
     DIVNO  = _SOAP_BASE_URI + "ws/2005/05/identity/claims/nistDivisionNumber",
-    ROLE   = _MS_BASE_URI   + "2008/06/identity/claims/role",
+    ROLE   = _MS_BASE_URI   + "ws/2008/06/identity/claims/role",
     GROUP  = _SOAP_BASE_URI + "claim/Group",
     WINID  = _SOAP_BASE_URI + "ws/2005/05/identity/claims/windowsaccountname"
 )
