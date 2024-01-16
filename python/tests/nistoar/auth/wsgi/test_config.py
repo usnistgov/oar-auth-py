@@ -21,14 +21,18 @@ class TestConfig(test.TestCase):
             "data_dir":  os.path.join(os.path.dirname(__file__))
         }
         self.assertEqual(config.find_auth_data_dir(cfg), cfg['data_dir'])
+        root = basedir
+        if os.environ.get('OAR_HOME') and \
+           os.path.exists(os.environ.get('OAR_HOME')):
+            root = Path(os.environ.get('OAR_HOME'))
 
         cfg['data_dir'] = "/does/not/exist"
         with self.assertRaises(ConfigurationException):
             config.find_auth_data_dir(cfg)
 
         # test find etc relative to build
-        self.assertEqual(config.find_auth_data_dir({}), str(basedir/"etc"/"authservice"))
-        self.assertEqual(config.def_auth_data_dir, str(basedir/"etc"/"authservice"))
+        self.assertEqual(config.find_auth_data_dir({}), str(root/"etc"/"authservice"))
+        self.assertEqual(config.def_auth_data_dir, str(root/"etc"/"authservice"))
 
         # test use of OAR_HOME env var
         with tempfile.TemporaryDirectory(prefix="_test_auth") as tmpdirname:
