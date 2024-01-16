@@ -188,10 +188,13 @@ def create_app(config: Mapping=None, data_dir=None):
 
         if len(errs) > 0:
             # IDP message has some validity errors
+            last = str(auth.get_last_error_reason())
+            if last:
+                errs.append(last)
             log.error("Failures encountered while processing IDP response:\n  "+
                       "\n  ".join(errs))
-            return _handle_error("Invalid response from IDP: "+str(auth.get_last_error_reason()),
-                                 400, errors=errs)
+            return _handle_error("Invalid response from IDP: "+last, 400, errors=errs)
+                                 
 
         if not auth.is_authenticated():
             return _handle_unauthenticated("User did not successfully login")
