@@ -25,7 +25,6 @@ ATTR_NAME = AttributeNames(
     DIVNO  = _SOAP_BASE_URI + "ws/2005/05/identity/claims/nistDivisionNumber",
     ROLE   = _MS_BASE_URI   + "ws/2008/06/identity/claims/role",
     GROUP  = _SOAP_BASE_URI + "claim/Group",
-#    WINID  = _SOAP_BASE_URI + "ws/2005/05/identity/claims/windowsaccountname"
     WINID  = _MS_BASE_URI + "ws/2008/06/identity/claims/windowsaccountname"
 )
 
@@ -34,19 +33,12 @@ def make_credentials(samlattrs: Mapping, expiration: Union[str,int,float]=None):
     create a Credentials object based on the results of SAML authentication 
     that can be returned to our service clients.
     """
-    want = [ ATTR_NAME.ID, ATTR_NAME.EMAIL, ATTR_NAME.QNAME, ATTR_NAME.DNAME,
-             ATTR_NAME.GIVEN, ATTR_NAME.FAMILY, ATTR_NAME.OU, ATTR_NAME.DIVNO,
-             ATTR_NAME.ROLE, ATTR_NAME.GROUP, ATTR_NAME.WINID ]
+    want = [ ATTR_NAME.ID, ATTR_NAME.EMAIL, ATTR_NAME.GIVEN, ATTR_NAME.FAMILY, ATTR_NAME.WINID ]
     id = samlattrs.get(ATTR_NAME.WINID, ["unknown"])[0]
     attrs = {
         "userName":     samlattrs.get(ATTR_NAME.GIVEN,  ["unknown"])[0],
         "userLastName": samlattrs.get(ATTR_NAME.FAMILY, ["unknown"])[0],
         "userEmail":    samlattrs.get(ATTR_NAME.EMAIL,  ["not-set"])[0],
-        "userOU":       samlattrs.get(ATTR_NAME.OU,     ["not-set"])[0], # 
-        "role":         samlattrs.get(ATTR_NAME.ROLE,   ["not-set"])[0],
-        "displayName":  samlattrs.get(ATTR_NAME.DNAME,  ["unknown"])[0],
-        "qualifiedName": samlattrs.get(ATTR_NAME.QNAME, ["unknown"])[0],
-        "userGroup":    samlattrs.get(ATTR_NAME.GROUP,  ["not-set"])[0],
         "winId":        samlattrs.get(ATTR_NAME.WINID,  ["unknown"])[0],
     }
 

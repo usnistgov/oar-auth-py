@@ -11,7 +11,6 @@ class Test_NIST_IDP(test.TestCase):
             idp.ATTR_NAME.EMAIL:  ["jerk@nist.gov"],
             idp.ATTR_NAME.GIVEN:  ["Gurn"],
             idp.ATTR_NAME.FAMILY: ["Cranston"],
-            idp.ATTR_NAME.OU:     ["MTV"],
         }
 
     def test_make_credentials(self):
@@ -22,7 +21,9 @@ class Test_NIST_IDP(test.TestCase):
         self.assertEqual(creds.email, "jerk@nist.gov")
         self.assertEqual(creds.given_name, "Gurn")
         self.assertEqual(creds.family_name, "Cranston")
-        self.assertEqual(creds['userOU'], "MTV")
+
+        self.assertNotIn('userOU', creds)
+
 
 
         
