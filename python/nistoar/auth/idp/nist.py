@@ -25,7 +25,8 @@ ATTR_NAME = AttributeNames(
     DIVNO  = _SOAP_BASE_URI + "ws/2005/05/identity/claims/nistDivisionNumber",
     ROLE   = _MS_BASE_URI   + "ws/2008/06/identity/claims/role",
     GROUP  = _SOAP_BASE_URI + "claim/Group",
-    WINID  = _SOAP_BASE_URI + "ws/2005/05/identity/claims/windowsaccountname"
+#    WINID  = _SOAP_BASE_URI + "ws/2005/05/identity/claims/windowsaccountname"
+    WINID  = _MS_BASE_URI + "ws/2008/06/identity/claims/windowsaccountname"
 )
 
 def make_credentials(samlattrs: Mapping, expiration: Union[str,int,float]=None):
@@ -41,7 +42,6 @@ def make_credentials(samlattrs: Mapping, expiration: Union[str,int,float]=None):
         "userName":     samlattrs.get(ATTR_NAME.GIVEN,  ["unknown"])[0],
         "userLastName": samlattrs.get(ATTR_NAME.FAMILY, ["unknown"])[0],
         "userEmail":    samlattrs.get(ATTR_NAME.EMAIL,  ["not-set"])[0],
-        "userOU":       samlattrs.get(ATTR_NAME.OU,     ["not-set"])[0],
         "userOU":       samlattrs.get(ATTR_NAME.OU,     ["not-set"])[0], # 
         "role":         samlattrs.get(ATTR_NAME.ROLE,   ["not-set"])[0],
         "displayName":  samlattrs.get(ATTR_NAME.DNAME,  ["unknown"])[0],
