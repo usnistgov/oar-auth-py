@@ -1,6 +1,6 @@
 import unittest as test
 
-from nistoar.auth.idp import nist as idp
+from nistoar.auth.idp import nist_okta as idp
 
 
 class Test_NIST_IDP(test.TestCase):
