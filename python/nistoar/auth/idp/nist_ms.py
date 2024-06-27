@@ -1,7 +1,8 @@
 """
 Support for the NIST Identity Provider service.  This module mainly handles 
 populating a Credentials object based on the SAML user attributes provide by 
-the NIST IDP. 
+the NIST IDP. This particular implementation is compatible with the NIST SAML 
+service provided via Microsoft (which is being deprecated).
 """
 from collections import namedtuple
 from collections.abc import Mapping

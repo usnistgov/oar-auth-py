@@ -23,7 +23,7 @@ PACKAGE_NAME=oar-auth-py
 ## containers to be built.  List them in dependency order (where a latter one
 ## depends the former ones).  
 #
-DEP_DOCKER_IMAGE_DIRS="pymongo jqfromsrc ejsonschema pyenv"
+DEP_DOCKER_IMAGE_DIRS="pymongo jq ejsonschema pyenv"
 EXEC_DOCKER_IMAGE_DIRS="build-test authserver idpserver"
 
 [ -d "$codedir/metadata/docker" ] || {

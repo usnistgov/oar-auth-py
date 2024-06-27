@@ -4,4 +4,4 @@ Support for different IDPs appear in different submodules.  The primary
 function of the different implementations is to populate a Credentials 
 instance from the data returned by the IDP.
 """
-from .nist import make_credentials
+from .nist_okta import make_credentials
