@@ -11,7 +11,7 @@
 #########################################################################
 FROM oar-metadata/ejsonschema
 
-RUN apt-get update && apt-get install -y python-yaml curl wget less sudo zip    \
+RUN apt-get update && apt-get install -y python3-yaml curl wget less sudo zip   \
                                          p7zip-full ca-certificates git xmlsec1 \
                                          pkg-config libxml2-dev libxmlsec1-dev  \
                                          libxmlsec1-openssl 
