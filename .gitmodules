@@ -1,3 +1,4 @@
 [submodule "metadata"]
 	path = metadata
 	url = https://github.com/usnistgov/oar-metadata
+	branch = integration
