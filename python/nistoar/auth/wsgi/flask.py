@@ -128,6 +128,9 @@ def create_app(config: Mapping=None, data_dir=None):
 
     if not config.get('allowed_service_endpoints'):
         app.logger.warning("No allowed service endpoints set in configuration")
+    else:
+        app.logger.debug("Set to handle redirects to:\n  %s",
+                         "\n  ".join(config.get('allowed_service_endpoints')))
 
     if config.get("disable_saml_login", {}).get("engaged") is True:
         app.logger.warning("SAML-based logins have been disabled!")
@@ -146,6 +149,7 @@ def create_app(config: Mapping=None, data_dir=None):
         the front-end application after successful authentication.
         """
         cfg = current_app.config
+        log = current_app.logger
         auth = create_saml_sp(request, cfg['saml'], cfg.get('data_dir'),
                               cfg.get('lowercase_urlencoding'))
 
@@ -153,6 +157,7 @@ def create_app(config: Mapping=None, data_dir=None):
             return _handle_badinput("missing redirectTo query parameter")
 
         if not checkAllowedUrls(request.args['redirectTo'], cfg.get('allowed_service_endpoints', [])):
+            log.warning("Unapproved redirect requested: %s", request.args['redirectTo']) 
             return _handle_badinput("redirectTo URL is not recognized or not approved",
                                     "Disallowed redirectTo")
 
