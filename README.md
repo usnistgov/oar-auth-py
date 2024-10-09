@@ -253,6 +253,11 @@ Type `docker/authserver/run.sh -h` and consult the [Docker container
 README](docker/authserver) for more information on running and
 configuring the services.  
 
+To test locally you can use local identity provider service instead of 
+connecting to your organizational IDP. 
+To run standalone local IDP read and follow the instructions here [IDP ReadMe]
+(https://github.com/usnistgov/oar-auth-py/blob/integration/idp/README.md)
+
 ## License and Disclaimer
 
 This software was developed by employees and contractors of the
