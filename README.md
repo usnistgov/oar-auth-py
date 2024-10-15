@@ -221,7 +221,7 @@ central configuration server; however, it can be fed its configuration
 via a static file.  See
 [authservice-config.yml](docker/authserver/authservice-config.yml) as
 an example.  The configuration parameters are defined in the [in-line
-python documentation](python/nistoar/auth/wsgi/flask).
+python documentation](python/nistoar/auth/wsgi/flask.py).
 
 ### For Developement and Interactive Testing
 
@@ -238,7 +238,7 @@ the background.  The Authentication service will listen on port 9095,
 and the login service, on 8088.
 
 You can excercise that login process by visiting 
-https://localhost:8000/sso/saml/login?redirectTo=https://localhost:8000/sso/_tokeninfo.
+https://localhost:9095/sso/saml/login?redirectTo=https://localhost:9095/sso/auth/_tokeninfo.
 When you see the login screen, you can enter "upper" and "crust" as
 the username and password, respectively.  After successful login, the
 browser should display user attributes and a JWT token in JSON format;
@@ -255,8 +255,8 @@ configuring the services.
 
 To test locally you can use local identity provider service instead of 
 connecting to your organizational IDP. 
-To run standalone local IDP read and follow the instructions here [IDP ReadMe]
-(https://github.com/usnistgov/oar-auth-py/blob/integration/idp/README.md)
+To run standalone local IDP read and follow the instructions [IDP
+ReadMe](idp/README.md)
 
 ## License and Disclaimer
 
