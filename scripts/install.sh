@@ -4,6 +4,7 @@
 # oar-metadata submodule).
 #
 set -e
+set -x
 prog=`basename $0`
 execdir=`dirname $0`
 [ "$execdir" = "" -o "$execdir" = "." ] && execdir=$PWD
@@ -22,7 +23,7 @@ oarmd_pkg=$base/metadata
 #install the PDR python library
 mkdir -p $PY_LIBDIR
 echo Installing python libraries into $PY_LIBDIR...
-(cd $PY_LIBDIR && PY_LIBDIR=$PWD)
+PY_LIBDIR=$(cd $PY_LIBDIR && echo $PWD)
 (cd $SOURCE_DIR/python && python3 setup.py install --install-purelib=$PY_LIBDIR --install-scripts=$BINDIR)
 
 #install the JAVA jars
