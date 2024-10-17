@@ -225,6 +225,8 @@ python documentation](python/nistoar/auth/wsgi/flask.py).
 
 ### For Developement and Interactive Testing
 
+This section guides you to run the services locally. The Authetication service broker is a service provider which can connect to identity provider (a SSO set up by your institute/org). 
+This section guides you to run both locally using docker. This helps during development stage.
 The Authentication Broker service and the Login Service can be run
 together easily via Docker by typing:
 ```
