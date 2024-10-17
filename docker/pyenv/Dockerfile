@@ -13,8 +13,11 @@ FROM oar-metadata/ejsonschema
 
 RUN apt-get update && apt-get install -y python3-yaml curl wget less sudo zip   \
                                          p7zip-full ca-certificates git xmlsec1 \
-                                         pkg-config libxml2-dev libxmlsec1-dev  \
-                                         libxmlsec1-openssl 
+                                         pkg-config build-essential libssl-dev  \
+                                         uwsgi-src python3-dev
+
+RUN pip install https://projects.unbit.it/downloads/uwsgi-lts.tar.gz
+
 # RUN pip install --upgrade pip setuptools
 RUN pip install funcsigs 'fs>=2.0.21' pyjwt python3-saml flask
 

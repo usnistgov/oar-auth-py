@@ -19,11 +19,13 @@ echo
 
 crts=/app/dist/oarauth/etc/authservice/certs
 
-echo '++' uwsgi --plugin python3 --https-socket :$port,$crts/spsite.pem,$crts/spsite.key \
+echo '++' uwsgi --binary-path $(which uwsgi) \
+                --https-socket :$port,$crts/spsite.pem,$crts/spsite.key \
                 --wsgi-file $script --static-map /docs=/docs \
                 --set-ph oar_config_file=$OAR_AUTHSERVER_CONFIG \
                 --set-ph oar_working_dir=$OAR_WORKING_DIR $opts
-uwsgi --plugin python3 --https-socket :$port,$crts/spsite.pem,$crts/spsite.key \
+uwsgi --binary-path $(which uwsgi) \
+      --https-socket :$port,$crts/spsite.pem,$crts/spsite.key \
       --wsgi-file $script --static-map /docs=/docs \
       --set-ph oar_config_file=$OAR_AUTHSERVER_CONFIG \
       --set-ph oar_working_dir=$OAR_WORKING_DIR $opts
