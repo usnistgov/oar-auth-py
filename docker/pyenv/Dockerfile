@@ -16,7 +16,17 @@ RUN apt-get update && apt-get install -y python3-yaml curl wget less sudo zip   
                                          pkg-config build-essential libssl-dev  \
                                          uwsgi-src python3-dev
 
-RUN pip install https://projects.unbit.it/downloads/uwsgi-lts.tar.gz
+# Need to build uwsgi with xmlsec1 support; OS-version does not provide that
+#
+# Note: projects.unbit.it is the official distribution site for uwsgi, but
+# it currently has an expired site cert
+# RUN pip install https://projects.unbit.it/downloads/uwsgi-lts.tar.gz
+#
+# At this time lts is 2.0.20; latest is 2.0.28
+ENV UWSGI_VERSION=2.0.20
+RUN curl -L -o /tmp/uwsgi-${UWSGI_VERSION}.tar.gz \
+    https://github.com/unbit/uwsgi/archive/refs/tags/${UWSGI_VERSION}.tar.gz
+RUN pip install /tmp/uwsgi-${UWSGI_VERSION}.tar.gz
 
 # RUN pip install --upgrade pip setuptools
 RUN pip install funcsigs 'fs>=2.0.21' pyjwt python3-saml flask
