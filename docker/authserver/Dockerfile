@@ -15,7 +15,7 @@ VOLUME /app/dist
 RUN mkdir -p /dev/oar-auth-py /app && chmod a+rwx /app
 WORKDIR /dev/oar-auth-py
 
-ENV PYTHONPATH /dev/oar-auth-py/python/dist/oarauth/lib/python:/app/dist/oarauth/lib/python
+ENV PYTHONPATH=/dev/oar-auth-py/python/dist/oarauth/lib/python:/app/dist/oarauth/lib/python
 
 ARG devuser=developer
 USER $devuser

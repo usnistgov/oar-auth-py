@@ -19,12 +19,14 @@ echo
 
 crts=/app/dist/oarauth/etc/authservice/certs
 
-echo '++' uwsgi --binary-path $(which uwsgi) \
+[ -v OAR_UWSGI_OPTS ] || OAR_UWSGI_OPTS="--binary-path $(which uwsgi)"
+
+echo '++' uwsgi $OAR_UWSGI_OPTS \
                 --https-socket :$port,$crts/spsite.pem,$crts/spsite.key \
                 --wsgi-file $script --static-map /docs=/docs \
                 --set-ph oar_config_file=$OAR_AUTHSERVER_CONFIG \
                 --set-ph oar_working_dir=$OAR_WORKING_DIR $opts
-uwsgi --binary-path $(which uwsgi) \
+uwsgi $OAR_UWSGI_OPTS \
       --https-socket :$port,$crts/spsite.pem,$crts/spsite.key \
       --wsgi-file $script --static-map /docs=/docs \
       --set-ph oar_config_file=$OAR_AUTHSERVER_CONFIG \

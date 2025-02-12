@@ -9,7 +9,7 @@
 # along with all required python libraries.
 #
 #########################################################################
-FROM oar-metadata/ejsonschema
+FROM oar-metadata/mdenv
 
 RUN apt-get update && apt-get install -y python3-yaml curl wget less sudo zip   \
                                          p7zip-full ca-certificates git xmlsec1 \
@@ -23,10 +23,14 @@ RUN apt-get update && apt-get install -y python3-yaml curl wget less sudo zip   
 # RUN pip install https://projects.unbit.it/downloads/uwsgi-lts.tar.gz
 #
 # At this time lts is 2.0.20; latest is 2.0.28
-ENV UWSGI_VERSION=2.0.20
-RUN curl -L -o /tmp/uwsgi-${UWSGI_VERSION}.tar.gz \
-    https://github.com/unbit/uwsgi/archive/refs/tags/${UWSGI_VERSION}.tar.gz
-RUN pip install /tmp/uwsgi-${UWSGI_VERSION}.tar.gz
+# (DO NOT USE UWSGI_VERSION as env var name!)
+ENV UWSGI_VERS=2.0.20
+RUN curl -L -o /tmp/uwsgi-${UWSGI_VERS}.tar.gz \
+    https://github.com/unbit/uwsgi/archive/refs/tags/${UWSGI_VERS}.tar.gz
+RUN pip install /tmp/uwsgi-${UWSGI_VERS}.tar.gz
+RUN mkdir -p /usr/local/share/uwsgi/conf
+COPY pipinstalled.ini /usr/local/share/uwsgi/conf/python.ini
+ENV OAR_UWSGI_OPTS="--ini /usr/local/share/uwsgi/conf/python.ini"
 
 # RUN pip install --upgrade pip setuptools
 RUN pip install funcsigs 'fs>=2.0.21' pyjwt python3-saml flask
