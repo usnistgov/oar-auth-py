@@ -14,6 +14,7 @@ FROM oar-metadata/ejsonschema
 RUN apt-get update && apt-get install -y python3-yaml curl wget less sudo zip   \
                                          p7zip-full ca-certificates git xmlsec1 \
                                          pkg-config build-essential libssl-dev  \
+                                         libxmlsec1-dev libxmlsec1-openssl \
                                          uwsgi-src python3-dev
 
 RUN pip install https://projects.unbit.it/downloads/uwsgi-lts.tar.gz
