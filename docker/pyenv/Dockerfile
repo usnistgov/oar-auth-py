@@ -33,6 +33,8 @@ COPY pipinstalled.ini /usr/local/share/uwsgi/conf/python.ini
 ENV OAR_UWSGI_OPTS="--ini /usr/local/share/uwsgi/conf/python.ini"
 
 # RUN pip install --upgrade pip setuptools
+RUN apt-get update && apt-get install -y libxmlsec1 libxmlsec1-dev
+RUN pip install --force-reinstall --no-binary lxml lxml
 RUN pip install funcsigs 'fs>=2.0.21' pyjwt python3-saml flask
 
 # Create the user that container operations should run as.  Normally,
