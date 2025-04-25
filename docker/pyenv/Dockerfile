@@ -24,7 +24,7 @@ RUN apt-get update && apt-get install -y python3-yaml curl wget less sudo zip   
 #
 # At this time lts is 2.0.20; latest is 2.0.28
 # (DO NOT USE UWSGI_VERSION as env var name!)
-ENV UWSGI_VERS=2.0.20
+ENV UWSGI_VERS=2.0.28
 RUN curl -L -o /tmp/uwsgi-${UWSGI_VERS}.tar.gz \
     https://github.com/unbit/uwsgi/archive/refs/tags/${UWSGI_VERS}.tar.gz
 RUN pip install /tmp/uwsgi-${UWSGI_VERS}.tar.gz
