@@ -14,6 +14,7 @@ FROM oar-metadata/mdenv
 RUN apt-get update && apt-get install -y python3-yaml curl wget less sudo zip   \
                                          p7zip-full ca-certificates git xmlsec1 \
                                          pkg-config build-essential libssl-dev  \
+                                         libxmlsec1-dev libxmlsec1-openssl \
                                          uwsgi-src python3-dev
 
 # Need to build uwsgi with xmlsec1 support; OS-version does not provide that
